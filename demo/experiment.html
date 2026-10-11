@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Explore paired routing outcomes, criteria and evidence in the synthetic improvement demo"><title>Agent Improvement Lab — Results</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="showcase.css"></head>
+<body>
+<a class="skip-link" href="#results">Skip to results</a>
+<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">a<span>i</span>l</span><span>Agent Improvement Lab</span></a><div class="header-actions"><button id="results-about" class="text-button">Evidence &amp; limits</button><button id="results-theme" class="text-button">Switch theme</button></div></header>
+<nav class="workspace-tabs" aria-label="Workspace"><a href="index.html">Improvement loop</a><a href="experiment.html" aria-current="page">Results</a><a href="catalog.html">Trace catalog</a></nav>
+<main id="results" class="showcase">
+ <p id="results-status" class="sr-only" role="status" aria-live="polite"></p><p id="results-loading" class="loading-note">Opening saved results…</p>
+ <section id="results-overview" hidden>
+  <div class="experiment-heading"><div><h1 id="results-title" tabindex="-1">What changed</h1><p>252 paired tasks · 84 families · synthetic demo</p></div><button id="results-export" class="catalog-icon-button" aria-label="Export complete experiment JSON" title="Export complete experiment JSON"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></button></div>
+  <div id="results-metrics" class="result-headline"></div><p class="result-decision">Same routing checks across both versions</p>
+  <div class="results-filter-row"><div><label for="results-criterion">Criterion</label><select id="results-criterion"></select></div><div><label for="results-filter">Outcome</label><select id="results-filter"><option value="all">All pairs</option><option value="improved">Improved</option><option value="regressed">Regressed</option><option value="unchanged">Unchanged</option><option value="unknown">Unknown</option></select></div><div class="results-search"><label for="results-query">Search</label><input id="results-query" type="search" placeholder="Task or family"></div></div>
+  <p id="results-totals" class="results-total"></p><div id="results-pairs"></div>
+  <div class="catalog-pagination"><button id="results-prev" class="text-button">← Previous</button><span id="results-page" class="small-label"></span><button id="results-next" class="text-button">Next →</button></div>
+  <details id="results-evidence" class="disclosure story-evidence"><summary>Evidence &amp; limits</summary><div id="results-evidence-content"></div><details class="disclosure"><summary>Exact intervention</summary><p id="results-action" class="detail-copy"></p><div class="prompt-pair"><details><summary>Baseline prompt</summary><pre id="results-baseline-prompt"></pre></details><details><summary>Candidate prompt</summary><pre id="results-candidate-prompt"></pre></details></div><p id="results-gate" class="detail-copy"></p></details></details>
+ </section>
+ <section id="results-viewer" hidden aria-labelledby="pair-title"><div class="catalog-detail-navigation"><button id="pair-back" class="text-button">← All results</button><button id="pair-export" class="catalog-icon-button" aria-label="Export displayed traces and scores JSON" title="Export displayed traces and scores JSON"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></button></div><div class="experiment-section-heading"><h1 id="pair-title" tabindex="-1"></h1><label><span class="sr-only">Displayed criterion</span><select id="pair-criterion"></select></label></div><p id="pair-note" class="detail-copy"></p><div id="pair-traces" class="experiment-paired-traces"></div><div class="experiment-pair-navigation"><button id="pair-prev" class="text-button">← Previous pair</button><button id="pair-next" class="text-button">Next pair →</button></div></section>
+ <noscript><a href="curated-experiment.json">Read the demo JSON</a></noscript>
+</main>
+<script src="catalog.js"></script><script src="family.js"></script><script src="results.js"></script>
+</body></html>

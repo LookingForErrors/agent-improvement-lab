@@ -1,0 +1,4215 @@
+{
+  "action": {
+    "cause_hypothesis": "The assistant may answer from a remembered value without verifying a current document.",
+    "cause_status": "unverified_hypothesis",
+    "evidence": [
+      {
+        "evidence_steps": [
+          "s1",
+          "s3",
+          "s5",
+          "s6"
+        ],
+        "family_id": "invented-retention",
+        "id": "issue-03fb555c336097c3ecb25a8b2eceadb5",
+        "observation": "Authored fixture only: The read v2 page says 30 days, but the answer invents 90.",
+        "trace_id": "baseline-invented-retention-2"
+      },
+      {
+        "evidence_steps": [
+          "s1",
+          "s3",
+          "s5",
+          "s6"
+        ],
+        "family_id": "invented-retention",
+        "id": "issue-10ba7c54a56d95cfb297bd1a12f16b0a",
+        "observation": "Authored fixture only: The read v2 page says 30 days, but the answer invents 90.",
+        "trace_id": "baseline-invented-retention-1"
+      },
+      {
+        "evidence_steps": [
+          "s1",
+          "s2"
+        ],
+        "family_id": "missed-tools",
+        "id": "issue-15aea0c58ee3cb3b05f832589ab45129",
+        "observation": "Authored fixture only: The user explicitly requested checking documentation, but no search/read occurred.",
+        "trace_id": "baseline-missed-tools-1"
+      },
+      {
+        "evidence_steps": [
+          "s1",
+          "s2"
+        ],
+        "family_id": "missed-tools",
+        "id": "issue-da0ee3ea57c5adb4236d5829df407c1f",
+        "observation": "Authored fixture only: The user explicitly requested checking documentation, but no search/read occurred.",
+        "trace_id": "baseline-missed-tools-2"
+      },
+      {
+        "evidence_steps": [
+          "s1",
+          "s3",
+          "s5",
+          "s6"
+        ],
+        "family_id": "wrong-version",
+        "id": "issue-e91f979126646f32ff9a1c8108d7b959",
+        "observation": "Authored fixture only: The request is v2; the answer uses a legacy v1 page.",
+        "trace_id": "baseline-wrong-version-1"
+      },
+      {
+        "evidence_steps": [
+          "s1",
+          "s3",
+          "s5",
+          "s6"
+        ],
+        "family_id": "wrong-version",
+        "id": "issue-f8b3e424b9be91a7bbba4abd0b404b2d",
+        "observation": "Authored fixture only: The request is v2; the answer uses a legacy v1 page.",
+        "trace_id": "baseline-wrong-version-2"
+      }
+    ],
+    "id": "ground-current-docs",
+    "intervention": "prompt",
+    "observed_summary": "Scripted baseline contains invented retention, omitted reads and legacy-version answers.",
+    "origin": "authored_product_action_not_applied",
+    "proposed_change": "Search the requested version, read the selected source and verify each factual claim before answering with its citation.",
+    "recipient": "product",
+    "support_counts": {
+      "families": 3,
+      "tasks": 3,
+      "traces": 6
+    },
+    "title": "Ground answers in the requested documentation version",
+    "verification": {
+      "keep_fixed": [
+        "tasks",
+        "documents",
+        "tools",
+        "rubric",
+        "judge identity"
+      ],
+      "primary_measure": "Whole-task grounded answer",
+      "protocol": "working_selection_then_family_heldout_check",
+      "regression_checks": [
+        "Supported current export answer",
+        "Citation linkage and version relevance separately"
+      ],
+      "repeat_runs": 2,
+      "success_criterion": "Remove the scripted grounding failures while preserving supported export answers."
+    }
+  },
+  "criteria": [
+    {
+      "definition": {
+        "applicability": "A task objective exists; if it is missing or ambiguous, return unassessable, not N/A.",
+        "question": "Did the whole trace reach the authorized objective or a permitted terminal handoff?",
+        "rubric": "Use the objective, completion policy and assistant/tool evidence. Trust returned tool success as observed execution; backend state is unverified. A missing response alone is insufficient for failure. Tool failure may mean an incomplete task without incorrect assistant behavior.",
+        "target": "observed_task_outcome",
+        "title": "Observed task completion",
+        "version": "1"
+      },
+      "grader": {
+        "id": "fixture_judge",
+        "kind": "saved_llm",
+        "parameters": {}
+      },
+      "id": "task_completion"
+    },
+    {
+      "definition": {
+        "applicability": "Tools are used OR product rules require a tool; omitted required calls are incorrect, not N/A.",
+        "question": "Were required relevant tools used, with no forbidden/unnecessary call and correct ordering?",
+        "rubric": "Cite tool rules, invocation and relevant context. Missing a required action can be established from the complete trace. Tool failure does not by itself imply wrong selection.",
+        "target": "assistant_behavior",
+        "title": "Tool selection",
+        "version": "1"
+      },
+      "grader": {
+        "id": "fixture_judge",
+        "kind": "saved_llm",
+        "parameters": {}
+      },
+      "id": "tool_selection"
+    },
+    {
+      "definition": {
+        "applicability": "At least one tool call exists; otherwise N/A.",
+        "question": "Were tool arguments structurally valid and justified by the task and policy?",
+        "rubric": "Cite argument-bearing steps, schema and user/context evidence. A valid schema with a wrong entity ID is incorrect. A structural checker alone cannot establish semantic argument correctness.",
+        "target": "assistant_behavior",
+        "title": "Tool arguments",
+        "version": "1"
+      },
+      "grader": {
+        "id": "fixture_judge",
+        "kind": "saved_llm",
+        "parameters": {}
+      },
+      "id": "tool_arguments"
+    },
+    {
+      "definition": {
+        "applicability": "Decision-relevant context exists; irrelevant history alone does not make this applicable.",
+        "question": "Did decisions respect relevant facts, instructions, corrections and conversation state?",
+        "rubric": "Cite relevant context and the decision/action. Prefer current authorized corrections to stale facts. Do not require every historical message to be repeated in the answer.",
+        "target": "assistant_behavior",
+        "title": "Use of context",
+        "version": "1"
+      },
+      "grader": {
+        "id": "fixture_judge",
+        "kind": "saved_llm",
+        "parameters": {}
+      },
+      "id": "context_use"
+    },
+    {
+      "definition": {
+        "applicability": "Uncertainty requires clarification OR a clarification question was asked.",
+        "question": "Were clarification and handoff decisions appropriate to uncertainty and policy?",
+        "rubric": "Cite uncertainty, questions/replies and policy. Questions should resolve decisions and obey the budget. Unnecessary questions can fail; unresolved ambiguity followed by authorized handoff can pass. A limit of two questions is demo policy, not a universal rule.",
+        "target": "assistant_behavior",
+        "title": "Clarification behavior",
+        "version": "1"
+      },
+      "grader": {
+        "id": "fixture_judge",
+        "kind": "saved_llm",
+        "parameters": {}
+      },
+      "id": "clarification"
+    },
+    {
+      "definition": {
+        "applicability": "Such an assistant assertion or commitment occurs; questions or silence alone are N/A.",
+        "question": "Were externally checkable assertions and commitments grounded in available evidence?",
+        "rubric": "Cite the claim and supporting/contradicting task/tool/policy evidence. Invented success or timing may fail even when the task was completed. Soft timing wording must be judged against actual product policy, not an invented universal SLA.",
+        "target": "assistant_behavior",
+        "title": "Grounding of claims",
+        "version": "1"
+      },
+      "grader": {
+        "id": "fixture_judge",
+        "kind": "saved_llm",
+        "parameters": {}
+      },
+      "id": "unsupported_claims"
+    },
+    {
+      "definition": {
+        "applicability": "A nonempty textual final answer exists.",
+        "question": "Does the final answer cite documents successfully read earlier in the trace?",
+        "rubric": "Check citation IDs against successful earlier read_doc results; missing citations fail, malformed required read evidence is unassessable. This is linkage, not claim truth or version relevance.",
+        "target": "assistant_behavior",
+        "title": "Observed source citation",
+        "version": "1"
+      },
+      "grader": {
+        "id": "citation_sources",
+        "kind": "deterministic",
+        "parameters": {}
+      },
+      "id": "citation_sources"
+    }
+  ],
+  "dataset_version": "docs-answer-fixture-v2",
+  "decisions": [
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The read v2 page says 30 days, but the answer invents 90.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The read v2 page says 30 days, but the answer invents 90.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2"
+      ],
+      "explanation": "Authored criterion decision: The user explicitly requested checking documentation, but no search/read occurred.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-missed-tools-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2"
+      ],
+      "explanation": "Authored criterion decision: The user explicitly requested checking documentation, but no search/read occurred.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-missed-tools-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The request is v2; the answer uses a legacy v1 page.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The request is v2; the answer uses a legacy v1 page.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2"
+      ],
+      "explanation": "Authored criterion decision: The user explicitly requested checking documentation, but no search/read occurred.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-missed-tools-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2"
+      ],
+      "explanation": "Authored criterion decision: The user explicitly requested checking documentation, but no search/read occurred.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-missed-tools-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [],
+      "explanation": "No tool invocation has arguments to assess.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "baseline-missed-tools-1",
+      "verdict": null
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [],
+      "explanation": "No tool invocation has arguments to assess.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "baseline-missed-tools-2",
+      "verdict": null
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The request is v2; the answer uses a legacy v1 page.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The request is v2; the answer uses a legacy v1 page.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The read v2 page says 30 days, but the answer invents 90.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The read v2 page says 30 days, but the answer invents 90.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2"
+      ],
+      "explanation": "Authored criterion decision: The user explicitly requested checking documentation, but no search/read occurred.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-missed-tools-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2"
+      ],
+      "explanation": "Authored criterion decision: The user explicitly requested checking documentation, but no search/read occurred.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-missed-tools-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The request is v2; the answer uses a legacy v1 page.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The request is v2; the answer uses a legacy v1 page.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "baseline-supported-export-1",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "baseline-supported-export-2",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "baseline-invented-retention-1",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "baseline-invented-retention-2",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "baseline-missed-tools-1",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "baseline-missed-tools-2",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "baseline-wrong-version-1",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "baseline-wrong-version-2",
+      "verdict": null
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The read v2 page says 30 days, but the answer invents 90.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The read v2 page says 30 days, but the answer invents 90.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2"
+      ],
+      "explanation": "Authored criterion decision: The user explicitly requested checking documentation, but no search/read occurred.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-missed-tools-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2"
+      ],
+      "explanation": "Authored criterion decision: The user explicitly requested checking documentation, but no search/read occurred.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-missed-tools-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The request is v2; the answer uses a legacy v1 page.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The request is v2; the answer uses a legacy v1 page.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "baseline-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "baseline-invented-retention-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s2"
+      ],
+      "explanation": "Missing citation or source not successfully read before this answer.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "baseline-missed-tools-1",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s2"
+      ],
+      "explanation": "Missing citation or source not successfully read before this answer.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "baseline-missed-tools-2",
+      "verdict": "incorrect"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "baseline-wrong-version-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "task_completion",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_selection",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "tool_arguments",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "context_use",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "candidate-supported-export-1",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "candidate-supported-export-2",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "candidate-invented-retention-1",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "candidate-invented-retention-2",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "candidate-missed-tools-1",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "candidate-missed-tools-2",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "candidate-wrong-version-1",
+      "verdict": null
+    },
+    {
+      "criterion_id": "clarification",
+      "evidence_steps": [],
+      "explanation": "No clarification is needed.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "not_applicable",
+      "trace_id": "candidate-wrong-version-2",
+      "verdict": null
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "unsupported_claims",
+      "evidence_steps": [
+        "s0",
+        "s1",
+        "s2",
+        "s4",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored criterion decision: The trace satisfies this criterion in this fixture.",
+      "origin": "saved_authored_semantic_decision",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "candidate-supported-export-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "candidate-invented-retention-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "candidate-missed-tools-2",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-1",
+      "verdict": "correct"
+    },
+    {
+      "criterion_id": "citation_sources",
+      "evidence_steps": [
+        "s6",
+        "s5"
+      ],
+      "explanation": "Citations link to observed earlier successful reads. This does not validate the claim or version relevance.",
+      "origin": "python_deterministic_check",
+      "status": "assessed",
+      "trace_id": "candidate-wrong-version-2",
+      "verdict": "correct"
+    }
+  ],
+  "expected": {
+    "criteria_comparison": {
+      "data_kind": "test_fixture",
+      "format": "criteria-comparison-v1",
+      "left_sha256": "5222fa6d5438adab271f7c59d717fea34bbfaf21741a08772aaba427736e176e",
+      "limitations": [
+        "Saved or deterministic measurements; no causal, significance or automatic promotion claim.",
+        "Quality delta is conditional on jointly assessable matched results. Exclusions and coverage must be read.",
+        "Repeat deltas are averaged by task, then family. Working and heldout are separate."
+      ],
+      "minimum_repeats": 2,
+      "right_sha256": "fe3930027c4ad8c86acd8bce54f4e698b45b5284634d4472f468c273a48a2a48",
+      "splits": {
+        "heldout": {
+          "citation_sources": {
+            "equal_family_task_mean_correct_delta": null,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 0,
+            "families_with_pairs": 0,
+            "improved": 0,
+            "jointly_assessable_pairs": 0,
+            "regressed": 0,
+            "tasks_with_pairs": 0,
+            "unchanged": 0
+          },
+          "clarification": {
+            "equal_family_task_mean_correct_delta": null,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 0,
+            "families_with_pairs": 0,
+            "improved": 0,
+            "jointly_assessable_pairs": 0,
+            "regressed": 0,
+            "tasks_with_pairs": 0,
+            "unchanged": 0
+          },
+          "context_use": {
+            "equal_family_task_mean_correct_delta": null,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 0,
+            "families_with_pairs": 0,
+            "improved": 0,
+            "jointly_assessable_pairs": 0,
+            "regressed": 0,
+            "tasks_with_pairs": 0,
+            "unchanged": 0
+          },
+          "task_completion": {
+            "equal_family_task_mean_correct_delta": null,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 0,
+            "families_with_pairs": 0,
+            "improved": 0,
+            "jointly_assessable_pairs": 0,
+            "regressed": 0,
+            "tasks_with_pairs": 0,
+            "unchanged": 0
+          },
+          "tool_arguments": {
+            "equal_family_task_mean_correct_delta": null,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 0,
+            "families_with_pairs": 0,
+            "improved": 0,
+            "jointly_assessable_pairs": 0,
+            "regressed": 0,
+            "tasks_with_pairs": 0,
+            "unchanged": 0
+          },
+          "tool_selection": {
+            "equal_family_task_mean_correct_delta": null,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 0,
+            "families_with_pairs": 0,
+            "improved": 0,
+            "jointly_assessable_pairs": 0,
+            "regressed": 0,
+            "tasks_with_pairs": 0,
+            "unchanged": 0
+          },
+          "unsupported_claims": {
+            "equal_family_task_mean_correct_delta": null,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 0,
+            "families_with_pairs": 0,
+            "improved": 0,
+            "jointly_assessable_pairs": 0,
+            "regressed": 0,
+            "tasks_with_pairs": 0,
+            "unchanged": 0
+          }
+        },
+        "working": {
+          "citation_sources": {
+            "equal_family_task_mean_correct_delta": 0.25,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 8,
+            "families_with_pairs": 4,
+            "improved": 2,
+            "jointly_assessable_pairs": 8,
+            "regressed": 0,
+            "tasks_with_pairs": 4,
+            "unchanged": 6
+          },
+          "clarification": {
+            "equal_family_task_mean_correct_delta": null,
+            "excluded_pairs": 8,
+            "exclusion_reasons": {
+              "not_applicable:none -> not_applicable:none": 8
+            },
+            "expected_pairs": 8,
+            "families_with_pairs": 0,
+            "improved": 0,
+            "jointly_assessable_pairs": 0,
+            "regressed": 0,
+            "tasks_with_pairs": 0,
+            "unchanged": 0
+          },
+          "context_use": {
+            "equal_family_task_mean_correct_delta": 0.75,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 8,
+            "families_with_pairs": 4,
+            "improved": 6,
+            "jointly_assessable_pairs": 8,
+            "regressed": 0,
+            "tasks_with_pairs": 4,
+            "unchanged": 2
+          },
+          "task_completion": {
+            "equal_family_task_mean_correct_delta": 0.75,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 8,
+            "families_with_pairs": 4,
+            "improved": 6,
+            "jointly_assessable_pairs": 8,
+            "regressed": 0,
+            "tasks_with_pairs": 4,
+            "unchanged": 2
+          },
+          "tool_arguments": {
+            "equal_family_task_mean_correct_delta": 0.3333333333333333,
+            "excluded_pairs": 2,
+            "exclusion_reasons": {
+              "not_applicable:none -> assessed:correct": 2
+            },
+            "expected_pairs": 8,
+            "families_with_pairs": 3,
+            "improved": 2,
+            "jointly_assessable_pairs": 6,
+            "regressed": 0,
+            "tasks_with_pairs": 3,
+            "unchanged": 4
+          },
+          "tool_selection": {
+            "equal_family_task_mean_correct_delta": 0.25,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 8,
+            "families_with_pairs": 4,
+            "improved": 2,
+            "jointly_assessable_pairs": 8,
+            "regressed": 0,
+            "tasks_with_pairs": 4,
+            "unchanged": 6
+          },
+          "unsupported_claims": {
+            "equal_family_task_mean_correct_delta": 0.75,
+            "excluded_pairs": 0,
+            "exclusion_reasons": {},
+            "expected_pairs": 8,
+            "families_with_pairs": 4,
+            "improved": 6,
+            "jointly_assessable_pairs": 8,
+            "regressed": 0,
+            "tasks_with_pairs": 4,
+            "unchanged": 2
+          }
+        }
+      },
+      "status": "descriptive_paired"
+    },
+    "metrics": {
+      "baseline": {
+        "heldout": {
+          "citation_sources": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "clarification": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "context_use": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "task_completion": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "tool_arguments": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "tool_selection": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "unsupported_claims": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          }
+        },
+        "working": {
+          "citation_sources": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 6,
+            "correct_rate_among_assessable": 0.75,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 0.75,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 2,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          },
+          "clarification": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 8,
+            "tasks": 4,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "context_use": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 2,
+            "correct_rate_among_assessable": 0.25,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 0.25,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 6,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          },
+          "task_completion": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 2,
+            "correct_rate_among_assessable": 0.25,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 0.25,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 6,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          },
+          "tool_arguments": {
+            "assessable": 6,
+            "assessed": 6,
+            "correct": 4,
+            "correct_rate_among_assessable": 0.6666666666666666,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 0.6666666666666666,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 3,
+            "grader_error": 0,
+            "incorrect": 2,
+            "missing": 0,
+            "not_applicable": 2,
+            "tasks": 4,
+            "tasks_with_assessable_results": 3,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          },
+          "tool_selection": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 6,
+            "correct_rate_among_assessable": 0.75,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 0.75,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 2,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          },
+          "unsupported_claims": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 2,
+            "correct_rate_among_assessable": 0.25,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 0.25,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 6,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          }
+        }
+      },
+      "candidate": {
+        "heldout": {
+          "citation_sources": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "clarification": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "context_use": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "task_completion": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "tool_arguments": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "tool_selection": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "unsupported_claims": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": null,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 0,
+            "families": 0,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 0,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          }
+        },
+        "working": {
+          "citation_sources": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 8,
+            "correct_rate_among_assessable": 1.0,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 1.0,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          },
+          "clarification": {
+            "assessable": 0,
+            "assessed": 0,
+            "correct": 0,
+            "correct_rate_among_assessable": null,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": null,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 0,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 8,
+            "tasks": 4,
+            "tasks_with_assessable_results": 0,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": null
+          },
+          "context_use": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 8,
+            "correct_rate_among_assessable": 1.0,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 1.0,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          },
+          "task_completion": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 8,
+            "correct_rate_among_assessable": 1.0,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 1.0,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          },
+          "tool_arguments": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 8,
+            "correct_rate_among_assessable": 1.0,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 1.0,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          },
+          "tool_selection": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 8,
+            "correct_rate_among_assessable": 1.0,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 1.0,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          },
+          "unsupported_claims": {
+            "assessable": 8,
+            "assessed": 8,
+            "correct": 8,
+            "correct_rate_among_assessable": 1.0,
+            "decision_coverage": 1.0,
+            "equal_family_task_mean_correct_rate": 1.0,
+            "expected": 8,
+            "families": 4,
+            "families_with_assessable_results": 4,
+            "grader_error": 0,
+            "incorrect": 0,
+            "missing": 0,
+            "not_applicable": 0,
+            "tasks": 4,
+            "tasks_with_assessable_results": 4,
+            "unassessable": 0,
+            "unassessable_rate_among_assessed": 0.0
+          }
+        }
+      }
+    },
+    "overall_pairs": [
+      {
+        "baseline": "incorrect",
+        "candidate": "correct",
+        "family_id": "invented-retention",
+        "repeat_id": "1",
+        "split": "working",
+        "task_id": "invented-retention"
+      },
+      {
+        "baseline": "incorrect",
+        "candidate": "correct",
+        "family_id": "invented-retention",
+        "repeat_id": "2",
+        "split": "working",
+        "task_id": "invented-retention"
+      },
+      {
+        "baseline": "incorrect",
+        "candidate": "correct",
+        "family_id": "missed-tools",
+        "repeat_id": "1",
+        "split": "working",
+        "task_id": "missed-tools"
+      },
+      {
+        "baseline": "incorrect",
+        "candidate": "correct",
+        "family_id": "missed-tools",
+        "repeat_id": "2",
+        "split": "working",
+        "task_id": "missed-tools"
+      },
+      {
+        "baseline": "correct",
+        "candidate": "correct",
+        "family_id": "supported-export",
+        "repeat_id": "1",
+        "split": "working",
+        "task_id": "supported-export"
+      },
+      {
+        "baseline": "correct",
+        "candidate": "correct",
+        "family_id": "supported-export",
+        "repeat_id": "2",
+        "split": "working",
+        "task_id": "supported-export"
+      },
+      {
+        "baseline": "incorrect",
+        "candidate": "correct",
+        "family_id": "wrong-version",
+        "repeat_id": "1",
+        "split": "working",
+        "task_id": "wrong-version"
+      },
+      {
+        "baseline": "incorrect",
+        "candidate": "correct",
+        "family_id": "wrong-version",
+        "repeat_id": "2",
+        "split": "working",
+        "task_id": "wrong-version"
+      }
+    ],
+    "reference_confusion": [
+      [
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        6,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "format": "agent-improvement-web-demo-v1",
+  "generation": {
+    "does_not_create_traces_or_scores": true,
+    "independence": "variants retain source family; not independent validation tasks",
+    "kind": "authored_template_variants",
+    "version": "novadocs-variants-v1"
+  },
+  "input_hashes": {
+    "SUMMARY.json": "71f261eeccd12b8a0f42feca7a2b07c49781f8212d9a4521a1d20e4fc5906604",
+    "criteria-baseline/metrics.json": "31319d4866c42de7a7e9a4436cbb0159627b8dcaae174c3f3080f04abb2627d4",
+    "criteria-baseline/report.json": "0fe390ee3afbe7d4f8b2f6823632dd296fab44bcbe8c89c73929072348c5ec7d",
+    "criteria-candidate/metrics.json": "d76f8760aab5713b27c571dcdda619c64f7f8bd8fa78df8fec7c8bf3824326ff",
+    "criteria-candidate/report.json": "98e65063ab9b28b011b02dee6c88d3ebeecc715066cd535d2edd608eaa855181",
+    "criteria-comparison.json": "2482518e7b8e0382a48f8cff70664738c71c5389fe017ba67043defb9e64ee41",
+    "inputs/provenance.json": "7a2eeb743d45783607f87fe87cdf311772e42b1b453a10a0b4da319c8e02dd44",
+    "workflow/actions.json": "a5fcc160e90b7a3c02fdb823cf0e8ac485cbfeaf63f0a4f3020fdecc76576231",
+    "workflow/comparison.json": "f9388316722462d7a33e78c67ddf5f41ab2d0a35632baa9d7cd942bca874f1fd",
+    "workflow/judge-validation.json": "9da41de902681c81e7fcf68b38e92e49a16c20de9e59482364978979d50415e1"
+  },
+  "population": {
+    "families": 4,
+    "heldout_families": 0,
+    "repeats_per_arm": 2,
+    "split": "working",
+    "tasks": 4,
+    "traces": 16
+  },
+  "provenance": {
+    "candidate": "prescribed replay; intervention not applied",
+    "external_sources": [],
+    "kind": "authored_test_fixture",
+    "model_calls": 0,
+    "real_human_labels": 0,
+    "reference": "shared authored source, not human gold",
+    "repeats": "identical authored copies, not repeated model observations",
+    "semantic_decisions": "saved authored decisions, not live model judgments"
+  },
+  "references": [
+    {
+      "evidence_steps": [
+        "s1",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored fixture only: The read v2 page says 30 days, but the answer invents 90.",
+      "family_id": "invented-retention",
+      "judge": "incorrect",
+      "origin": "shared_authored_fixture_no_human_gold",
+      "reference": "incorrect",
+      "trace_id": "baseline-invented-retention-1"
+    },
+    {
+      "evidence_steps": [
+        "s1",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored fixture only: The read v2 page says 30 days, but the answer invents 90.",
+      "family_id": "invented-retention",
+      "judge": "incorrect",
+      "origin": "shared_authored_fixture_no_human_gold",
+      "reference": "incorrect",
+      "trace_id": "baseline-invented-retention-2"
+    },
+    {
+      "evidence_steps": [
+        "s1",
+        "s2"
+      ],
+      "explanation": "Authored fixture only: The user explicitly requested checking documentation, but no search/read occurred.",
+      "family_id": "missed-tools",
+      "judge": "incorrect",
+      "origin": "shared_authored_fixture_no_human_gold",
+      "reference": "incorrect",
+      "trace_id": "baseline-missed-tools-1"
+    },
+    {
+      "evidence_steps": [
+        "s1",
+        "s2"
+      ],
+      "explanation": "Authored fixture only: The user explicitly requested checking documentation, but no search/read occurred.",
+      "family_id": "missed-tools",
+      "judge": "incorrect",
+      "origin": "shared_authored_fixture_no_human_gold",
+      "reference": "incorrect",
+      "trace_id": "baseline-missed-tools-2"
+    },
+    {
+      "evidence_steps": [
+        "s6"
+      ],
+      "explanation": "Authored fixture only: The answer matches the successfully read current v2 page and cites it.",
+      "family_id": "supported-export",
+      "judge": "correct",
+      "origin": "shared_authored_fixture_no_human_gold",
+      "reference": "correct",
+      "trace_id": "baseline-supported-export-1"
+    },
+    {
+      "evidence_steps": [
+        "s6"
+      ],
+      "explanation": "Authored fixture only: The answer matches the successfully read current v2 page and cites it.",
+      "family_id": "supported-export",
+      "judge": "correct",
+      "origin": "shared_authored_fixture_no_human_gold",
+      "reference": "correct",
+      "trace_id": "baseline-supported-export-2"
+    },
+    {
+      "evidence_steps": [
+        "s1",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored fixture only: The request is v2; the answer uses a legacy v1 page.",
+      "family_id": "wrong-version",
+      "judge": "incorrect",
+      "origin": "shared_authored_fixture_no_human_gold",
+      "reference": "incorrect",
+      "trace_id": "baseline-wrong-version-1"
+    },
+    {
+      "evidence_steps": [
+        "s1",
+        "s3",
+        "s5",
+        "s6"
+      ],
+      "explanation": "Authored fixture only: The request is v2; the answer uses a legacy v1 page.",
+      "family_id": "wrong-version",
+      "judge": "incorrect",
+      "origin": "shared_authored_fixture_no_human_gold",
+      "reference": "incorrect",
+      "trace_id": "baseline-wrong-version-2"
+    }
+  ],
+  "traces": [
+    {
+      "agent_version": "docs-baseline-authored-v1",
+      "arm": "baseline",
+      "family_id": "supported-export",
+      "id": "baseline-supported-export-1",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: baseline",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "Which audit export formats does NovaDocs v2 support?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit export",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"export-v2\", \"title\": \"NovaDocs v2 audit export\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "export-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"export-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit export\", \"text\": \"NovaDocs v2 audit export supports CSV and JSON. Viewers cannot export audit data; Editors and Owners can export.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 supports CSV and JSON audit exports. [export-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "1",
+      "split": "working",
+      "task_id": "supported-export"
+    },
+    {
+      "agent_version": "docs-baseline-authored-v1",
+      "arm": "baseline",
+      "family_id": "supported-export",
+      "id": "baseline-supported-export-2",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: baseline",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "Which audit export formats does NovaDocs v2 support?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit export",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"export-v2\", \"title\": \"NovaDocs v2 audit export\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "export-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"export-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit export\", \"text\": \"NovaDocs v2 audit export supports CSV and JSON. Viewers cannot export audit data; Editors and Owners can export.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 supports CSV and JSON audit exports. [export-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "2",
+      "split": "working",
+      "task_id": "supported-export"
+    },
+    {
+      "agent_version": "docs-baseline-authored-v1",
+      "arm": "baseline",
+      "family_id": "invented-retention",
+      "id": "baseline-invented-retention-1",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: baseline",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "For NovaDocs v2, how long are audit events retained? I need the documented period.",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit retention",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"audit-v2\", \"title\": \"NovaDocs v2 audit events\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "audit-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"audit-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit events\", \"text\": \"NovaDocs v2 retains audit events for 30 days. Audit export is available in CSV and JSON. Retention extensions are not described on this page.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 retains audit events for 90 days. [audit-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "1",
+      "split": "working",
+      "task_id": "invented-retention"
+    },
+    {
+      "agent_version": "docs-baseline-authored-v1",
+      "arm": "baseline",
+      "family_id": "invented-retention",
+      "id": "baseline-invented-retention-2",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: baseline",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "For NovaDocs v2, how long are audit events retained? I need the documented period.",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit retention",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"audit-v2\", \"title\": \"NovaDocs v2 audit events\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "audit-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"audit-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit events\", \"text\": \"NovaDocs v2 retains audit events for 30 days. Audit export is available in CSV and JSON. Retention extensions are not described on this page.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 retains audit events for 90 days. [audit-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "2",
+      "split": "working",
+      "task_id": "invented-retention"
+    },
+    {
+      "agent_version": "docs-baseline-authored-v1",
+      "arm": "baseline",
+      "family_id": "missed-tools",
+      "id": "baseline-missed-tools-1",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: baseline",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "Can you check the NovaDocs v2 documentation and tell me the supported audit export formats?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 supports CSV and JSON audit exports.",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "1",
+      "split": "working",
+      "task_id": "missed-tools"
+    },
+    {
+      "agent_version": "docs-baseline-authored-v1",
+      "arm": "baseline",
+      "family_id": "missed-tools",
+      "id": "baseline-missed-tools-2",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: baseline",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "Can you check the NovaDocs v2 documentation and tell me the supported audit export formats?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 supports CSV and JSON audit exports.",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "2",
+      "split": "working",
+      "task_id": "missed-tools"
+    },
+    {
+      "agent_version": "docs-baseline-authored-v1",
+      "arm": "baseline",
+      "family_id": "wrong-version",
+      "id": "baseline-wrong-version-1",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: baseline",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "We upgraded to NovaDocs v2. An old page says seven days; what does the current documentation say about audit retention?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit retention",
+                "version": "v1"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"audit-v1\", \"title\": \"Legacy NovaDocs v1 audit events\", \"version\": \"v1\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "audit-v1"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"audit-v1\", \"version\": \"v1\", \"title\": \"Legacy NovaDocs v1 audit events\", \"text\": \"NovaDocs v1 retains audit events for 7 days. This legacy page does not describe NovaDocs v2.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 retains audit events for 7 days. [audit-v1]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "1",
+      "split": "working",
+      "task_id": "wrong-version"
+    },
+    {
+      "agent_version": "docs-baseline-authored-v1",
+      "arm": "baseline",
+      "family_id": "wrong-version",
+      "id": "baseline-wrong-version-2",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: baseline",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "We upgraded to NovaDocs v2. An old page says seven days; what does the current documentation say about audit retention?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit retention",
+                "version": "v1"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"audit-v1\", \"title\": \"Legacy NovaDocs v1 audit events\", \"version\": \"v1\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "audit-v1"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"audit-v1\", \"version\": \"v1\", \"title\": \"Legacy NovaDocs v1 audit events\", \"text\": \"NovaDocs v1 retains audit events for 7 days. This legacy page does not describe NovaDocs v2.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 retains audit events for 7 days. [audit-v1]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "2",
+      "split": "working",
+      "task_id": "wrong-version"
+    },
+    {
+      "agent_version": "docs-candidate-authored-v1",
+      "arm": "candidate",
+      "family_id": "supported-export",
+      "id": "candidate-supported-export-1",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: candidate",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "Which audit export formats does NovaDocs v2 support?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit export",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"export-v2\", \"title\": \"NovaDocs v2 audit export\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "export-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"export-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit export\", \"text\": \"NovaDocs v2 audit export supports CSV and JSON. Viewers cannot export audit data; Editors and Owners can export.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 supports CSV and JSON audit exports. [export-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "1",
+      "split": "working",
+      "task_id": "supported-export"
+    },
+    {
+      "agent_version": "docs-candidate-authored-v1",
+      "arm": "candidate",
+      "family_id": "supported-export",
+      "id": "candidate-supported-export-2",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: candidate",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "Which audit export formats does NovaDocs v2 support?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit export",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"export-v2\", \"title\": \"NovaDocs v2 audit export\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "export-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"export-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit export\", \"text\": \"NovaDocs v2 audit export supports CSV and JSON. Viewers cannot export audit data; Editors and Owners can export.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 supports CSV and JSON audit exports. [export-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "2",
+      "split": "working",
+      "task_id": "supported-export"
+    },
+    {
+      "agent_version": "docs-candidate-authored-v1",
+      "arm": "candidate",
+      "family_id": "invented-retention",
+      "id": "candidate-invented-retention-1",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: candidate",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "For NovaDocs v2, how long are audit events retained? I need the documented period.",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit retention",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"audit-v2\", \"title\": \"NovaDocs v2 audit events\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "audit-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"audit-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit events\", \"text\": \"NovaDocs v2 retains audit events for 30 days. Audit export is available in CSV and JSON. Retention extensions are not described on this page.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 retains audit events for 30 days. [audit-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "1",
+      "split": "working",
+      "task_id": "invented-retention"
+    },
+    {
+      "agent_version": "docs-candidate-authored-v1",
+      "arm": "candidate",
+      "family_id": "invented-retention",
+      "id": "candidate-invented-retention-2",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: candidate",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "For NovaDocs v2, how long are audit events retained? I need the documented period.",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit retention",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"audit-v2\", \"title\": \"NovaDocs v2 audit events\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "audit-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"audit-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit events\", \"text\": \"NovaDocs v2 retains audit events for 30 days. Audit export is available in CSV and JSON. Retention extensions are not described on this page.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 retains audit events for 30 days. [audit-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "2",
+      "split": "working",
+      "task_id": "invented-retention"
+    },
+    {
+      "agent_version": "docs-candidate-authored-v1",
+      "arm": "candidate",
+      "family_id": "missed-tools",
+      "id": "candidate-missed-tools-1",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: candidate",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "Can you check the NovaDocs v2 documentation and tell me the supported audit export formats?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit export",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"export-v2\", \"title\": \"NovaDocs v2 audit export\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "export-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"export-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit export\", \"text\": \"NovaDocs v2 audit export supports CSV and JSON. Viewers cannot export audit data; Editors and Owners can export.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 supports CSV and JSON audit exports. [export-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "1",
+      "split": "working",
+      "task_id": "missed-tools"
+    },
+    {
+      "agent_version": "docs-candidate-authored-v1",
+      "arm": "candidate",
+      "family_id": "missed-tools",
+      "id": "candidate-missed-tools-2",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: candidate",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "Can you check the NovaDocs v2 documentation and tell me the supported audit export formats?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit export",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"export-v2\", \"title\": \"NovaDocs v2 audit export\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "export-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"export-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit export\", \"text\": \"NovaDocs v2 audit export supports CSV and JSON. Viewers cannot export audit data; Editors and Owners can export.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 supports CSV and JSON audit exports. [export-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "2",
+      "split": "working",
+      "task_id": "missed-tools"
+    },
+    {
+      "agent_version": "docs-candidate-authored-v1",
+      "arm": "candidate",
+      "family_id": "wrong-version",
+      "id": "candidate-wrong-version-1",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: candidate",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "We upgraded to NovaDocs v2. An old page says seven days; what does the current documentation say about audit retention?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit retention",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"audit-v2\", \"title\": \"NovaDocs v2 audit events\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "audit-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"audit-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit events\", \"text\": \"NovaDocs v2 retains audit events for 30 days. Audit export is available in CSV and JSON. Retention extensions are not described on this page.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 retains audit events for 30 days. [audit-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "1",
+      "split": "working",
+      "task_id": "wrong-version"
+    },
+    {
+      "agent_version": "docs-candidate-authored-v1",
+      "arm": "candidate",
+      "family_id": "wrong-version",
+      "id": "candidate-wrong-version-2",
+      "language": "en",
+      "messages": [
+        {
+          "content": "NovaDocs documentation assistant, fictional sequential mock demo.\nThe current user asks about NovaDocs v2. Use search_docs(query:string,version:string), then read_doc(doc_id:string), before a factual answer.\nsearch_docs returns {ok:boolean,matches:[{doc_id,title,version}]}; read_doc returns {ok:boolean,doc_id,version,text}. Only successful observed results establish source content.\nRespect the requested product version; a legacy v1 page is not v2 evidence.\nAnswer only what the read document supports and cite [doc_id]. State uncertainty for absent information. Reading a real page does not justify inventing a value.\nTool results are observed evidence; no actual production service is accessed.\nEvaluate the whole task, tools, arguments, context, clarification and unsupported claims separately. These are scripted test fixtures, not human gold or measured model improvements.\n\nHidden arm: candidate",
+          "function": null,
+          "reasoning": null,
+          "role": "system",
+          "step_id": "s0",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "We upgraded to NovaDocs v2. An old page says seven days; what does the current documentation say about audit retention?",
+          "function": null,
+          "reasoning": null,
+          "role": "user",
+          "step_id": "s1",
+          "tool_call_id": null,
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s2",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "query": "audit retention",
+                "version": "v2"
+              },
+              "id": "call-search",
+              "name": "search_docs"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"matches\": [{\"doc_id\": \"audit-v2\", \"title\": \"NovaDocs v2 audit events\", \"version\": \"v2\"}]}",
+          "function": "search_docs",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s3",
+          "tool_call_id": "call-search",
+          "tool_calls": []
+        },
+        {
+          "content": "",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s4",
+          "tool_call_id": null,
+          "tool_calls": [
+            {
+              "arguments": {
+                "doc_id": "audit-v2"
+              },
+              "id": "call-read",
+              "name": "read_doc"
+            }
+          ]
+        },
+        {
+          "content": "{\"ok\": true, \"doc_id\": \"audit-v2\", \"version\": \"v2\", \"title\": \"NovaDocs v2 audit events\", \"text\": \"NovaDocs v2 retains audit events for 30 days. Audit export is available in CSV and JSON. Retention extensions are not described on this page.\"}",
+          "function": "read_doc",
+          "reasoning": null,
+          "role": "tool",
+          "step_id": "s5",
+          "tool_call_id": "call-read",
+          "tool_calls": []
+        },
+        {
+          "content": "NovaDocs v2 retains audit events for 30 days. [audit-v2]",
+          "function": null,
+          "reasoning": null,
+          "role": "assistant",
+          "step_id": "s6",
+          "tool_call_id": null,
+          "tool_calls": []
+        }
+      ],
+      "provenance": "authored_test_fixture",
+      "repeat_id": "2",
+      "split": "working",
+      "task_id": "wrong-version"
+    }
+  ]
+}
