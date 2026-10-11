@@ -1,0 +1,85 @@
+format: criteria-pack-v1
+id: structured-routing-demo
+version: '2'
+data_kind: recorded_evaluation
+primary_metric: routed_terminal
+regression_metrics:
+- closed_destination
+- routing_support
+- routing_protocol
+criteria:
+- id: routed_terminal
+  definition:
+    version: '1'
+    title: Confirmed routing or handoff
+    target: observed_task_outcome
+    question: Did execution reach any confirmed routing/handoff for the current mock
+      ticket?
+    applicability: All closed routing tasks; incomplete measurement unassessable.
+    rubric: Check returned OK routing/handoff evidence. Wrong destination can still
+      satisfy this execution metric but must fail the separate destination/support
+      regression checks.
+  grader:
+    kind: deterministic
+    id: routed_terminal
+    parameters: &id001
+      cases:
+        P01-denied-action-1:
+          ticket_id: P01-001
+          expected_team: accounts
+          required_support:
+          - action_permission
+        P01-unknown-cause-1:
+          ticket_id: P01-007
+          expected_team: operator
+          required_support: []
+- id: closed_destination
+  definition:
+    version: '1'
+    title: Direct destination target
+    target: observed_task_outcome
+    question: Was this mock ticket assigned to its authored allowed destination?
+    applicability: All closed routing scenarios; incomplete infrastructure measurements
+      are unassessable.
+    rubric: Compare the last confirmed mock assignment to the authored destination
+      target. In denied-action cases operator handoff misses the direct-routing target
+      but can remain permitted behavior under routing_support; this is not an overall
+      assistant-failure label. In genuinely unknown cases operator is the authored
+      allowed target.
+  grader:
+    kind: deterministic
+    id: closed_destination
+    parameters: *id001
+- id: routing_support
+  definition:
+    version: '1'
+    title: Routing from inspected fields
+    target: assistant_behavior
+    question: Did every routing action use the required supporting field?
+    applicability: All closed routing scenarios; incomplete infrastructure measurements
+      are unassessable.
+    rubric: For confirmed accounts routing in the denied-action scenario require inspected
+      action_permission. Operator handoff is permitted while the resolving field was
+      not inspected; a safe fallback can miss the direct destination target without
+      incorrect assistant behavior. In the unknown-cause scenario operator is allowed.
+      Every confirmed route must satisfy this rule; no natural-language interpretation.
+  grader:
+    kind: deterministic
+    id: routing_support
+    parameters: *id001
+- id: routing_protocol
+  definition:
+    version: '1'
+    title: Tool execution contract
+    target: assistant_behavior
+    question: Were current ticket, read order, successful tools and two-field limit
+      respected?
+    applicability: All closed routing scenarios; incomplete infrastructure measurements
+      are unassessable.
+    rubric: Require get_ticket before asking/routing; correct ticket ID, known tools,
+      OK results, at most two distinct requested fields. This narrow contract does
+      not establish question/field consistency or full semantic argument quality.
+  grader:
+    kind: deterministic
+    id: routing_protocol
+    parameters: *id001

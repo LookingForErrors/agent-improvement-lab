@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="An interactive synthetic agent improvement workflow: inspect failures, change behavior and compare routing outcomes"><title>Agent Improvement Lab — Improvement loop</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="showcase.css?v=r7-controls-wrap"></head>
+<body>
+<a class="skip-link" href="#story">Skip to improvement loop</a>
+<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">a<span>i</span>l</span><span>Agent Improvement Lab</span></a><div class="header-actions"><button id="story-about" class="text-button">Evidence &amp; limits</button><button id="story-theme" class="text-button">Switch theme</button></div></header>
+<nav class="workspace-tabs" aria-label="Workspace"><a href="index.html" aria-current="page">Improvement loop</a><a href="experiment.html">Results</a><a href="catalog.html">Trace catalog</a></nav>
+<main id="story" class="showcase">
+ <p id="story-status" class="sr-only" role="status" aria-live="polite"></p>
+ <div id="story-loading" class="loading-note">Opening demo…</div>
+ <div id="story-ready" hidden>
+  <div class="story-heading"><div><h1>A change you can measure</h1><p class="recorded-note"><span class="sample-dot" aria-hidden="true"></span>Synthetic demo</p></div><div class="story-headline"><div><span class="story-rate-before" id="headline-before"></span><span class="metric-arrow" aria-hidden="true">↗</span><strong id="headline-after"></strong></div><span>Routing success</span><button id="story-start" class="story-start" aria-label="Play story">See how <span aria-hidden="true">→</span></button></div></div>
+  <section class="story-board" aria-labelledby="scene-title">
+   <div class="story-progress" aria-hidden="true"></div>
+   <div class="scene-heading"><div><span id="scene-number" class="scene-number" aria-hidden="true">01</span><h2 id="scene-title" tabindex="-1">Before the change</h2></div><span id="scene-meta" class="small-label"></span></div>
+   <div id="scene-content" class="scene-content"></div>
+   <div class="story-control-bar"><nav id="scene-nav" aria-label="Story scenes"><button data-scene="0"><span>01</span>Before</button><button data-scene="1"><span>02</span>Find</button><button data-scene="2"><span>03</span>Change</button><button data-scene="3"><span>04</span>Verify</button><button data-scene="4"><span>05</span>After</button></nav><div class="playback-controls"><button id="story-prev" class="icon-control" aria-label="Previous scene">←</button><button id="story-play" class="icon-control" aria-label="Play story"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z"/></svg></button><button id="story-next" class="icon-control" aria-label="Next scene">→</button><button id="story-skip" class="text-button">Skip to result</button></div></div>
+  </section>
+  <details id="story-evidence" class="disclosure story-evidence"><summary>Evidence &amp; limits <span class="small-label">84 family units</span></summary><label class="motion-choice"><input id="story-motion" type="checkbox"> Reduce motion</label><div id="story-evidence-content"></div><a class="text-button" href="experiment.html#comparison">Inspect all results ↗</a></details>
+  <footer class="workspace-footer"><div class="more-examples"><a href="guided.html">Guided example ↗</a><a href="pilot.html">Earlier pilot ↗</a></div><button id="story-export" class="catalog-icon-button" aria-label="Export story JSON" title="Export story JSON"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></button></footer>
+ </div>
+ <noscript><p>This interactive story needs JavaScript. <a href="curated-experiment.json">Read the demo JSON</a></p></noscript>
+</main>
+<script src="catalog.js"></script><script src="family.js?v=r6-cases"></script><script src="story.js?v=r7-controls"></script>
+</body></html>

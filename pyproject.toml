@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-improvement-lab"
+version = "0.1.0"
+description = "Evidence-based improvement workflows for LLM assistants"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12,<3.13"
+dependencies = ["pydantic==2.13.5", "PyYAML==6.0.3"]
+
+[project.optional-dependencies]
+workflow = ["langgraph==1.2.12", "langgraph-checkpoint-sqlite==3.1.1"]
+execution = ["inspect-ai==0.3.273", "psutil==7.2.2"]
+
+[project.scripts]
+ail-import = "agent_improvement_lab.import_traces:main"
+ail-annotate = "agent_improvement_lab.annotation:main"
+ail-criteria = "agent_improvement_lab.criteria:main"
+ail-judge-metrics = "agent_improvement_lab.judge_metrics:main"
+ail-actions = "agent_improvement_lab.failure_actions:main"
+ail-workflow = "agent_improvement_lab.workflow_cli:main"
+
+[tool.setuptools]
+packages = ["agent_improvement_lab", "annotation_ui"]
+include-package-data = false
+
+[tool.setuptools.package-data]
+annotation_ui = ["index.html", "app.js", "style.css"]

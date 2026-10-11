@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Follow actual saved model traces through evaluation, a prompt change and a rejected candidate"><title>Agent Improvement Lab — Saved experiment</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<a class="skip-link" href="#experiment">Skip to experiment</a>
+<header class="site-header"><a class="brand" href="index.html" aria-label="Agent Improvement Lab, guided example"><span class="brand-mark" aria-hidden="true">a<span>i</span>l</span><span>Agent Improvement Lab</span></a><div class="header-actions"><button id="experiment-about" class="text-button">About this run</button><button id="experiment-theme" class="text-button">Switch theme</button></div></header>
+<nav class="workspace-tabs" aria-label="Workspace"><a href="index.html">Improvement loop</a><a href="catalog.html">Trace catalog</a><a href="experiment.html">Results</a></nav>
+<main id="experiment" class="experiment-workspace">
+ <p id="experiment-status" class="sr-only" role="status" aria-live="polite"></p>
+ <section id="experiment-overview">
+  <div class="experiment-heading"><div><h1>Clarification delivery</h1><p>Saved model output · mock tools and users</p></div><button id="experiment-export" class="catalog-icon-button" aria-label="Export saved experiment JSON" title="Export saved experiment JSON"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></button></div>
+  <nav class="experiment-stage-nav" aria-label="Experiment stages"><button data-stage="evaluation">Evaluation</button><button data-stage="change">Change</button><button data-stage="comparison">Comparison</button></nav>
+  <section id="experiment-evaluation" class="experiment-stage" aria-labelledby="evaluation-title">
+   <div class="experiment-section-heading"><h2 id="evaluation-title" tabindex="-1">Where conversations stopped</h2><span class="small-label">Baseline · deterministic checks</span></div>
+   <div id="evaluation-metrics" class="experiment-metrics"></div>
+   <div class="experiment-finding"><div><h3>Two conversations ended without assignment</h3><p>The questions were plain text. The closed mock user only receives <code>ask_user</code> calls</p></div><div id="finding-links"></div></div>
+   <div class="experiment-section-heading"><h3>Inspect a check</h3><div><label class="sr-only" for="evaluation-criterion">Evaluation criterion</label><select id="evaluation-criterion"></select></div></div>
+   <p id="evaluation-question" class="experiment-question"></p><div id="evaluation-results" class="experiment-results"></div>
+   <div class="experiment-stage-actions"><button class="secondary" data-stage="change">See the change →</button></div>
+  </section>
+  <section id="experiment-change" class="experiment-stage" hidden aria-labelledby="change-title">
+   <div class="experiment-section-heading"><h2 id="change-title" tabindex="-1">Make clarification reach the user</h2><span class="small-label">Prompt · tested in this run</span></div>
+   <p class="experiment-lead">Repeat the delivery rule: ask through <code>ask_user</code>, then confirm only after assignment</p>
+   <details class="disclosure" open><summary>Exact added prompt</summary><pre id="experiment-delta" class="experiment-prompt"></pre></details>
+   <details class="disclosure"><summary>Why this change?</summary><p id="experiment-observation" class="detail-copy"></p><div id="prior-evidence-links"></div><p class="small-label">Source traces precede this pilot and are excluded from its metrics</p><p id="experiment-hypothesis" class="detail-copy"></p></details>
+   <details class="disclosure"><summary>Verification and fixed inputs</summary><p id="experiment-verification" class="detail-copy"></p><p class="detail-copy">Model, fact-selection rules, tools, controlled replies and grader definitions stayed fixed</p><details><summary>Baseline prompt</summary><pre id="experiment-baseline-prompt" class="experiment-prompt"></pre></details></details>
+   <div class="experiment-stage-actions"><button class="secondary" data-stage="comparison">Check the result →</button></div>
+  </section>
+  <section id="experiment-comparison" class="experiment-stage" hidden aria-labelledby="comparison-title">
+   <div class="experiment-section-heading"><h2 id="comparison-title" tabindex="-1">Do not adopt</h2><span class="small-label">Saved decision</span></div>
+   <p class="experiment-lead">One more assignment came with one new wrong route</p>
+   <div id="comparison-metrics" class="experiment-metrics"></div>
+   <p id="comparison-outcomes" class="experiment-question"></p>
+   <div class="experiment-comparison-controls"><div><label for="comparison-criterion">Compare criterion</label><select id="comparison-criterion"></select></div><div><label for="comparison-filter">Pairs</label><select id="comparison-filter"><option value="all">All pairs</option><option value="improved">Improved</option><option value="regressed">Regressed</option><option value="unchanged">Unchanged</option></select></div></div>
+   <div id="comparison-pairs"></div>
+   <details class="disclosure"><summary>Decision rule and uncertainty</summary><p id="experiment-decision-rule" class="detail-copy"></p><p class="detail-copy">Four working families, two correlated repeats. No held-out result. Confidence interval withheld: fewer than ten independent families</p></details>
+  </section>
+  <p class="experiment-limit">4 working families · 2 repeats · no statistical gain established</p>
+ </section>
+ <section id="experiment-viewer" hidden aria-labelledby="experiment-viewer-title">
+  <div class="catalog-detail-navigation"><button id="experiment-viewer-back" class="text-button">← Experiment</button><button id="experiment-viewer-export" class="catalog-icon-button" aria-label="Export displayed traces JSON" title="Export displayed traces JSON"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg></button></div>
+  <div class="experiment-section-heading"><h1 id="experiment-viewer-title" tabindex="-1"></h1><div><label class="sr-only" for="viewer-criterion">Trace criterion</label><select id="viewer-criterion"></select></div></div>
+  <div id="experiment-viewer-traces" class="experiment-paired-traces"></div>
+  <div class="experiment-pair-navigation"><button id="experiment-pair-prev" class="text-button">← Previous pair</button><button id="experiment-pair-next" class="text-button">Next pair →</button></div>
+ </section>
+</main>
+<dialog id="experiment-about-dialog" aria-labelledby="experiment-about-title"><div class="dialog-heading"><h2 id="experiment-about-title">About this run</h2><button id="experiment-about-close" class="dialog-close" aria-label="Close run details">×</button></div><p>Actual saved local-model trajectories, evaluated with four deterministic criteria</p><dl class="facts"><div><dt>Model</dt><dd id="experiment-model"></dd></div><div><dt>Data</dt><dd>16 pilot traces, 8 pairs, 4 working families. Mock tools and controlled authored replies; no real service changes</dd></div><div><dt>Evaluation</dt><dd>64 saved script results. No LLM judge or new human gold. The browser recomputes aggregates and reads the existing decision</dd></div><div><dt>Limits</dt><dd>Ordinary chat continuation is unobserved. Narrow target, support and tool checks do not establish overall assistant quality</dd></div></dl><p class="detail-copy">No model runs on this website. The candidate was tested before this page was built; it was not promoted</p></dialog>
+<script src="experiment-data.js"></script><script src="catalog.js"></script><script src="experiment.js"></script>
+</body></html>

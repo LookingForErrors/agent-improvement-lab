@@ -1,0 +1,45 @@
+{
+  "arms": {
+    "baseline": {
+      "first_to_repeat": {
+        "correct->correct": 2,
+        "correct->incorrect": 1,
+        "incorrect->correct": 1,
+        "incorrect->incorrect": 7,
+        "incorrect->unassessable": 1
+      },
+      "verdicts": {
+        "correct": 3,
+        "incorrect": 8,
+        "unassessable": 1
+      },
+      "verified_success_rate_planned_denominator": 0.25
+    },
+    "candidate": {
+      "first_to_repeat": {
+        "correct->correct": 7,
+        "correct->incorrect": 1,
+        "incorrect->incorrect": 3,
+        "unassessable->correct": 1
+      },
+      "verdicts": {
+        "correct": 8,
+        "incorrect": 4
+      },
+      "verified_success_rate_planned_denominator": 0.6666666666666666
+    }
+  },
+  "default_adopted": false,
+  "family_units": 12,
+  "finalized_source_count": 24,
+  "human_gold": false,
+  "included_in_primary_N": false,
+  "independent_review_sha256": "ab9827d241c38746eeafeea385613723d7123a517483d0d00fabe1403d9c7dac",
+  "planned_cases_per_arm": 12,
+  "planned_dialogues": 24,
+  "primary_result_modified": false,
+  "scope": "Prespecified repeat-2 diagnostic; excluded from primary N, uncertainty and decision",
+  "semantic_dissents_retained": 0,
+  "sentinel_comparisons": 12,
+  "sentinels_both_match": 12
+}

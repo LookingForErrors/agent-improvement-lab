@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Follow an assistant failure through evidence, a proposed change and a reproducible comparison">
+  <title>Agent Improvement Lab — Example workspace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip-link" href="#workspace">Skip to workspace</a>
+<header class="site-header">
+  <a class="brand" href="#workspace" aria-label="Agent Improvement Lab, example workspace"><span class="brand-mark" aria-hidden="true">a<span>i</span>l</span><span>Agent Improvement Lab</span></a>
+  <div class="header-actions">
+    <button id="about" class="text-button">About the example</button>
+    <details class="utilities"><summary aria-label="Workspace options"><span aria-hidden="true">•••</span></summary><div class="utility-menu"><button id="download">Export example JSON</button><button id="theme">Switch theme</button><button id="reset">Start over</button></div></details>
+  </div>
+</header>
+<nav class="workspace-tabs" aria-label="Workspace"><a href="guided.html" aria-current="page">Guided example</a><a href="index.html">Improvement loop</a><a href="catalog.html">Trace catalog</a><a href="experiment.html">Results</a></nav>
+<main id="workspace">
+  <div class="workspace-heading">
+    <div><p class="kicker">Example workspace / NovaDocs</p><h1>Turn a failure into a next step</h1></div>
+    <button id="provenance" class="sample-label"><span class="sample-dot" aria-hidden="true"></span>Authored sample<span aria-hidden="true"> ↗</span></button>
+  </div>
+  <nav class="step-nav" aria-label="Example steps">
+    <button data-stage="0" aria-current="step"><span class="step-number">01</span><span>Inspect</span></button>
+    <button data-stage="1" disabled><span class="step-number">02</span><span>Diagnose</span></button>
+    <button data-stage="2" disabled><span class="step-number">03</span><span>Propose</span></button>
+    <button data-stage="3" disabled><span class="step-number">04</span><span>Compare</span></button>
+  </nav>
+  <p id="status" class="sr-only" role="status" aria-live="polite">Inspect the request, answer and source, then check the example</p>
+
+  <section id="investigation" class="work-panel" aria-labelledby="investigation-title">
+    <aside class="case-rail" aria-label="Example cases"><div class="rail-heading"><span>Four tasks</span><span class="small-label">v2 docs</span></div><div id="case-list" class="case-list"></div><p class="rail-note">One assistant<br>Three failure patterns</p></aside>
+    <div class="investigation-content">
+      <div class="panel-heading"><div><p id="stage-label" class="kicker">01 / Inspect</p><h2 id="investigation-title" tabindex="-1">Read the answer beside its source</h2></div><div class="head-tools"><div class="panel-actions"><button id="run" class="primary">Check this example <span aria-hidden="true">→</span></button><button id="to-diagnose" class="primary" hidden>View diagnosis <span aria-hidden="true">→</span></button><button id="to-propose" class="primary" hidden>Review proposed change <span aria-hidden="true">→</span></button></div><span id="check-origin" class="action-note">Authored labels · local citation check</span></div></div>
+      <div class="case-context"><p id="case-description" class="supporting-copy"></p><span id="case-outcome" class="verdict" hidden></span></div>
+      <div class="request-block"><span class="field-label">User request</span><p id="user-request"></p></div>
+      <div class="evidence-grid">
+        <article class="evidence-card answer-card"><div class="evidence-heading"><span class="field-label">Assistant answer</span><span id="answer-version" class="small-label">Baseline</span></div><p id="assistant-answer"></p></article>
+        <article class="evidence-card source-card"><div class="evidence-heading"><span class="field-label">Source read</span><span id="source-version" class="small-label"></span></div><p id="source-text"></p></article>
+      </div>
+      <div id="diagnosis" hidden><p id="diagnosis-summary" class="diagnosis-summary"></p><div id="key-checks" class="key-checks"></div></div>
+      <details id="full-trace" class="disclosure"><summary>Full trajectory <span id="trace-length" class="small-label"></span></summary><div class="trace-controls"><label for="trace-select">Version and copy</label><select id="trace-select"></select><span id="trace-summary" class="small-label"></span></div><div id="messages" class="messages"></div></details>
+      <details id="all-checks" class="disclosure" hidden><summary>All seven checks <span class="small-label">Across the sample</span></summary><div id="metrics" class="table-wrap"></div><details class="nested-disclosure"><summary>Reference comparison</summary><p class="detail-copy">These labels share an authored origin. Agreement here does not validate an independent judge</p><div id="confusion" class="table-wrap"></div><p id="agreement" class="detail-copy"></p></details></details>
+      
+    </div>
+  </section>
+
+  <section id="proposal" class="standalone-panel" hidden aria-labelledby="proposal-heading">
+    <div class="proposal-layout">
+      <div><p class="kicker">03 / Propose</p><h2 id="proposal-heading" tabindex="-1">Verify before answering</h2><p id="action-change" class="proposal-change"></p><div class="change-type"><span class="small-label">Intervention</span><span>Prompt</span><span class="small-label">Owner</span><span>Product</span></div><div id="decision-feedback" class="decision-feedback" hidden></div><div class="panel-actions"><button id="approve" class="primary">Compare supplied candidate <span aria-hidden="true">→</span></button><button id="reject" class="secondary">Reject proposal</button><button id="reconsider" class="secondary" hidden>Review again</button></div><p class="action-note">Demo decision only · no product changes are applied</p><button id="custom-propose" class="text-button custom-propose">Propose your own change ↗</button><article id="custom-saved" class="custom-saved" hidden aria-labelledby="custom-saved-heading"><div class="custom-saved-heading"><h3 id="custom-saved-heading">Your proposal</h3><span class="sample-tag">Not run</span></div><p id="custom-saved-change"></p><p id="custom-saved-meta" class="detail-copy"></p><details class="disclosure"><summary>Evidence and proposed check</summary><div id="custom-saved-evidence"></div><span class="field-label">Success criterion</span><p id="custom-saved-check"></p><span class="field-label">Hypothesis · unverified</span><p id="custom-saved-hypothesis"></p></details><div class="custom-saved-actions"><button id="custom-export" class="secondary">Export draft JSON ↓</button><button id="custom-edit" class="text-button">Edit proposal</button></div></article><p id="custom-summary-status" class="detail-copy" role="status"></p></div>
+      <div class="proposal-evidence"><h3>Why this change?</h3><p id="action-observed"></p><div id="action-evidence" class="evidence-links"></div><details class="disclosure"><summary>Cause and verification</summary><span class="field-label">Hypothesis · unverified</span><p id="action-cause"></p><span class="field-label">What to check next</span><p id="action-verification"></p><p class="detail-copy">Keep the tasks, documents, tools and rubric fixed. Confirm on held-out families before adopting</p></details><p id="action-support" class="detail-copy"></p></div>
+    </div>
+  </section>
+
+  <section id="comparison" class="standalone-panel" hidden aria-labelledby="comparison-heading">
+    <div class="panel-heading"><div><p class="kicker">04 / Compare</p><h2 id="comparison-heading" tabindex="-1">Did the change address the failures?</h2></div><span class="sample-tag">Fixture comparison</span></div>
+    <div id="comparison-summary" class="comparison-summary"></div>
+    <p class="comparison-caveat">Candidate answers are supplied repairs. This is a workflow example, not measured model improvement</p>
+    <div id="family-comparison" class="family-comparison"></div>
+    <details class="disclosure"><summary>Pairing and calculation details</summary><div id="pairs" class="table-wrap"></div><p class="detail-copy">Two identical authored copies per version. Repeats are averaged within tasks, then across families. Four working families; no held-out validation or statistical acceptance</p></details>
+    <div class="next-cycle"><div class="next-heading"><div><p class="kicker">Next cycle</p><h3>Make the next test concrete</h3><p class="supporting-copy">Eight unscored requests from these failure families</p></div><button id="generate" class="secondary">Create next test inputs <span aria-hidden="true">↗</span></button></div><div class="generation-controls"><details class="settings"><summary>Generation settings</summary><div><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" value="17" aria-describedby="seed-help"><span id="seed-help" class="detail-copy">Same seed, same inputs</span></div></details><button id="download-tasks" class="text-button" disabled>Export tasks JSON ↓</button></div><p id="generation-status" class="detail-copy" role="status" aria-live="polite"></p><div id="generated" class="generated-tasks"></div><p id="generation-note" class="detail-copy" hidden>Template variants retain their source family. They are task proposals, not new trajectories or independent validation</p></div>
+  </section>
+
+  <footer class="workspace-footer"><span>Built for your traces, criteria and experiments</span><button id="bring-own" class="text-button">How to use your own data <span aria-hidden="true">↗</span></button><span class="local-note">No model calls</span></footer>
+</main>
+
+<dialog id="about-dialog" aria-labelledby="about-title"><div class="dialog-heading"><h2 id="about-title">About this example</h2><button class="dialog-close" aria-label="Close example details">×</button></div><p>A fictional documentation assistant should read the requested product version, answer from the source and cite it</p><dl class="facts"><div><dt>Sample</dt><dd>16 authored traces · four tasks and families · two identical copies per version</dd></div><div><dt>Computed here</dt><dd>Citation linkage, counts, pairing and seeded task generation</dd></div><div><dt>Supplied</dt><dd>Semantic decisions for six criteria, reference decisions and candidate answers</dd></div><div><dt>Limits</dt><dd>No model calls, real human gold, independent judge validation, held-out evidence or measured improvement</dd></div></dl><p class="detail-copy">Choices stay in this browser. Nothing is uploaded or applied to a product.</p></dialog>
+<dialog id="own-data-dialog" aria-labelledby="own-data-title"><div class="dialog-heading"><h2 id="own-data-title">Bring your own assistant</h2><button class="dialog-close" aria-label="Close data instructions">×</button></div><p>The Python workflow uses three inputs. This browser example does not import or run your data</p><ol class="input-guide"><li><strong>Traces</strong><span>JSON or JSONL, with a YAML mapping to the common schema</span></li><li><strong>Rules and criteria</strong><span>Your assistant’s tools, task policies and versioned graders</span></li><li><strong>A comparison</strong><span>A concrete change, the same tasks and an explicit decision</span></li></ol><p class="detail-copy">The source workflow preserves annotations, evidence, actions and paired results. Model execution uses a separate caller-managed endpoint</p></dialog>
+<dialog id="custom-dialog" class="proposal-editor" aria-labelledby="custom-dialog-title"><form id="custom-form" method="dialog" novalidate><div class="dialog-heading"><div><p class="kicker">Your alternative / Not run</p><h2 id="custom-dialog-title">Propose a change</h2></div><button type="button" class="dialog-close" aria-label="Close proposal editor">×</button></div><fieldset class="failure-choices"><legend>Which failures would it address?</legend><div id="custom-families"></div></fieldset><div class="form-field"><label for="custom-type">Change type</label><select id="custom-type"><option value="prompt">Prompt</option><option value="context">Context</option><option value="tools">Tools</option><option value="scaffold">Scaffold / workflow</option><option value="retrieval">Retrieval</option><option value="model">Model</option><option value="training_data">Training data</option><option value="post_training">Post-training</option><option value="investigation">Investigation</option></select></div><div class="form-field"><label for="custom-change">What would you change?</label><textarea id="custom-change" rows="3" maxlength="1500" required placeholder="Describe a concrete change"></textarea></div><div class="form-field"><label for="custom-hypothesis">Why might it help? <span class="small-label">Optional · hypothesis</span></label><textarea id="custom-hypothesis" rows="2" maxlength="1000" placeholder="A plausible cause or mechanism, not a proven diagnosis"></textarea></div><div class="form-field"><label for="custom-check">How would you know it helped?</label><textarea id="custom-check" rows="2" maxlength="1000" required placeholder="Define a result that would support or reject the idea"></textarea></div><details class="disclosure"><summary>Experiment settings</summary><div class="form-field"><label for="custom-criterion">Primary check</label><select id="custom-criterion"></select></div><div class="form-field"><label for="custom-regression">What must keep working?</label><textarea id="custom-regression" rows="2" maxlength="500" required></textarea></div><div class="form-field"><label for="custom-repeats">Planned runs per task</label><input id="custom-repeats" type="number" min="2" max="20" step="1" value="2" required><span class="detail-copy">Planning only · no runs start here</span></div></details><p id="custom-editor-status" class="detail-copy" role="status" aria-live="polite" tabindex="-1"></p><div class="editor-actions"><button id="custom-save" type="submit" class="primary">Save proposal</button><button id="custom-clear" type="button" class="text-button">Clear my draft</button></div><p class="detail-copy">Your draft stays in this browser. Export prepares a plan; it does not apply or evaluate the change</p></form></dialog>
+<script src="demo-data.js"></script><script src="app.js"></script>
+</body>
+</html>

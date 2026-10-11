@@ -1,0 +1,5 @@
+Controlled clarification interface (identical for both prompt versions):
+Use ask_user(ticket_id, field, question) for every clarification. Do not end a turn with a free-text question expecting a new user message; this closed environment responds only through ask_user.
+Select exactly one factual field and write a natural question about that field. The tool returns only the authored fact for your selected field; it does not diagnose or route. Stated unknowns are valid answers.
+Read get_ticket before any clarification or routing. Request at most two distinct factual fields in total. Do not repeat a known field unnecessarily. If the facts still do not distinguish a route, hand off to an operator. No third field is available.
+Use at most one tool call per assistant message. After a successful routing or handoff, briefly confirm that action; do not claim to have fixed the underlying issue.

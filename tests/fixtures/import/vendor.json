@@ -1,0 +1,97 @@
+[
+  {
+    "trace": {
+      "uuid": "vendor-trace-1"
+    },
+    "request": {
+      "id": "task-1",
+      "text": "I was charged twice for one order."
+    },
+    "locale": "en",
+    "assistant": {
+      "revision": "prompt-a"
+    },
+    "tags": {
+      "batch": 0,
+      "approved": false,
+      "optional": null
+    },
+    "unknown_vendor_field": {
+      "score": 0.99,
+      "comment": "Keep as source evidence, hide from blind annotation."
+    },
+    "events": [
+      {
+        "event_id": "e0",
+        "actor": "customer",
+        "body": "I was charged twice for one order."
+      },
+      {
+        "event_id": "e1",
+        "actor": "bot",
+        "body": "",
+        "thinking": "Observed optional reasoning text, not inferred.",
+        "actions": [
+          {
+            "call_id": "call-lookup",
+            "function": {
+              "name": "get_ticket",
+              "arguments": "{\"ticket_id\":\"DEMO-1\"}"
+            },
+            "vendor_latency_ms": 12
+          }
+        ]
+      },
+      {
+        "event_id": "e2",
+        "actor": "function_result",
+        "body": {
+          "status": "OK",
+          "history": [
+            {
+              "text": "Two settled charges for one order."
+            }
+          ]
+        },
+        "result": {
+          "call_id": "call-lookup",
+          "name": "get_ticket"
+        }
+      },
+      {
+        "event_id": "e3",
+        "actor": "bot",
+        "body": "",
+        "actions": [
+          {
+            "call_id": "call-route",
+            "function": {
+              "name": "route_ticket",
+              "arguments": {
+                "ticket_id": "DEMO-1",
+                "team": "payments"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "event_id": "e4",
+        "actor": "function_result",
+        "body": {
+          "status": "OK",
+          "assigned_to": "payments"
+        },
+        "result": {
+          "call_id": "call-route",
+          "name": "route_ticket"
+        }
+      },
+      {
+        "event_id": "e5",
+        "actor": "bot",
+        "body": "I’ve sent your ticket to the payments team."
+      }
+    ]
+  }
+]

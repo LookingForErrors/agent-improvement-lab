@@ -1,0 +1,68 @@
+[
+  {
+    "authored_reference_note": "Closed scenario input, not human gold or an outcome. Hidden facts not sent to the assistant.",
+    "environment_version": "structured-routing-v1",
+    "fact_kinds": {
+      "f25c42c652d": "own_access",
+      "f4301205ef5": "current_plan",
+      "f48e93a4166": "action_permission",
+      "f75ed786971": "observed_symptom",
+      "f879580de4c": "own_role",
+      "feccbe9576f": "financial_transaction"
+    },
+    "facts": {
+      "f25c42c652d": "I can sign in and view the affected item. I have not established why the requested action is restricted.",
+      "f4301205ef5": "I cannot verify whether my plan or allowance covers this particular action.",
+      "f48e93a4166": "The brief sharing settings say my account can view it but downloading is not allowed.",
+      "f75ed786971": "The affected action is unavailable; the interface does not give a cause.",
+      "f879580de4c": "I checked the project members list. My project role is Editor.",
+      "feccbe9576f": "I have not found a receipt for this feature and cannot check its payment or activation status."
+    },
+    "family_id": "P01-denied-action",
+    "id": "P01-denied-action-1",
+    "language": "en",
+    "mock_ticket": {
+      "history": [],
+      "status": "open",
+      "ticket_id": "P01-001"
+    },
+    "provenance": "derived_existing_working_p01_case; generic unknown fallback removed",
+    "slice": "target",
+    "split": "working",
+    "ticket_id": "P01-001",
+    "user_request": "The brief is ready, but its download button is disabled. I can still read it. Can you send this to the right support team?"
+  },
+  {
+    "authored_reference_note": "Closed scenario input, not human gold or an outcome. Hidden facts not sent to the assistant.",
+    "environment_version": "structured-routing-v1",
+    "fact_kinds": {
+      "f27c559e766": "own_access",
+      "f55692526f9": "own_role",
+      "f7b0aefcd5e": "current_plan",
+      "f99d6c1ad6e": "observed_symptom",
+      "fc83dba0803": "financial_transaction",
+      "ffa27e668b1": "action_permission"
+    },
+    "facts": {
+      "f27c559e766": "I can sign in and view the affected item. I have not established why the requested action is restricted.",
+      "f55692526f9": "I cannot find my project role.",
+      "f7b0aefcd5e": "I cannot verify whether my plan or allowance covers this particular action.",
+      "f99d6c1ad6e": "The affected action is unavailable; the interface does not give a cause.",
+      "fc83dba0803": "I have not found a receipt for this feature and cannot check its payment or activation status.",
+      "ffa27e668b1": "The archive settings do not tell me whether I have export permission."
+    },
+    "family_id": "P01-unknown-cause",
+    "id": "P01-unknown-cause-1",
+    "language": "en",
+    "mock_ticket": {
+      "history": [],
+      "status": "open",
+      "ticket_id": "P01-007"
+    },
+    "provenance": "derived_existing_working_p01_case; generic unknown fallback removed",
+    "slice": "target",
+    "split": "working",
+    "ticket_id": "P01-007",
+    "user_request": "The archive export button says Restricted. Clicking it only shows contact support. I have nothing else to go on."
+  }
+]

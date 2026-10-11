@@ -1,0 +1,32 @@
+mapping_version: '1'
+kind: trace
+fields:
+  id: trace.uuid
+  task_id: request.id
+  language: locale
+  agent_version: assistant.revision
+  metadata: tags
+messages:
+  path: events
+  role_map:
+    customer: user
+    bot: assistant
+    function_result: tool
+  fields:
+    step_id: event_id
+    role: actor
+    content: body
+    reasoning: thinking
+    tool_call_id: result.call_id
+    function: result.name
+  tool_calls:
+    path: actions
+    fields:
+      id: call_id
+      name: function.name
+      arguments: function.arguments
+task:
+  fields:
+    id: request.id
+    objective: request.text
+    language: locale

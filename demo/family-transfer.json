@@ -1,0 +1,33 @@
+{
+  "format": "recorded-improvement-site-binding-v1",
+  "source_files": {
+    "example-selection.json": "e9cf7e3d2a7165d37c0cff601e670db9044fcb31e6ca42ff0c7257359e95580f",
+    "experiment-data.js": "e847ffdc4f694382fe21610fadb80f8ac9de4d1241a7e6d0853199de2a5c36f4",
+    "experiment-fixture.json": "c07384fb60a653d81c22f73ea9bba6a8c7f7654cb83157717d561d7d2e232b63",
+    "stability-diagnostics.json": "e62a447bf9156472740bfabc27db2a8da212fed4998e83dfa9c7f87c5bc9f424"
+  },
+  "files": {
+    "family-experiment.json": "c07384fb60a653d81c22f73ea9bba6a8c7f7654cb83157717d561d7d2e232b63",
+    "family-examples.json": "e9cf7e3d2a7165d37c0cff601e670db9044fcb31e6ca42ff0c7257359e95580f",
+    "family-stability.json": "e62a447bf9156472740bfabc27db2a8da212fed4998e83dfa9c7f87c5bc9f424",
+    "story-data.json": "426f8760870933a436ae397be8a8170c1b23c1bafdbbbb2a616373f61b65a172"
+  },
+  "new_model_calls": 0,
+  "human_gold": false,
+  "publication": false,
+  "primary_traces": 504,
+  "pairs": 252,
+  "families": 84,
+  "primary_counts": {
+    "baseline": {
+      "incorrect": 149,
+      "correct": 80,
+      "unassessable": 23
+    },
+    "candidate": {
+      "correct": 147,
+      "incorrect": 76,
+      "unassessable": 29
+    }
+  }
+}

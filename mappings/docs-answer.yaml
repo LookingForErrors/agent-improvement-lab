@@ -1,0 +1,34 @@
+mapping_version: '1'
+kind: trace
+fields:
+  id: run.id
+  task_id: request.id
+  family_id: request.family
+  agent_version: run.version
+  language: locale
+  metadata: tags
+defaults:
+  split: working
+  provenance: authored_test_fixture
+messages:
+  path: events
+  fields:
+    step_id: id
+    role: role
+    content: text
+    tool_call_id: call_id
+    function: tool
+  tool_calls:
+    path: calls
+    fields:
+      id: id
+      name: name
+      arguments: arguments
+task:
+  fields:
+    id: request.id
+    objective: request.text
+    family_id: request.family
+    language: locale
+  defaults:
+    split: working
