@@ -1,0 +1,135 @@
+name: Offline workflow contracts
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    env:
+      LANGSMITH_TRACING: 'false'
+      LANGCHAIN_TRACING_V2: 'false'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Create allowlisted install snapshot
+        run: python scripts/stage_offline.py --output "$RUNNER_TEMP/ail-source"
+      - name: Install pinned offline workflow
+        run: |
+          python -m pip install -r "$RUNNER_TEMP/ail-source/requirements/build.lock.txt"
+          python -m pip install --no-build-isolation -c "$RUNNER_TEMP/ail-source/requirements/workflow.lock.txt" "$RUNNER_TEMP/ail-source[workflow]"
+      - name: Validate public commands outside source directory
+        working-directory: ${{ runner.temp }}
+        run: |
+          ail-import --help
+          ail-annotate --help
+          ail-criteria --help
+          ail-judge-metrics --help
+          ail-actions --help
+          ail-workflow --help
+          python -c "from importlib.resources import files; assert files('annotation_ui').joinpath('app.js').read_bytes()"
+      - name: Check evidence, revisions, pairing and recovery
+        working-directory: ${{ runner.temp }}/ail-source
+        run: |
+          python -m unittest discover -s tests -p 'test_import.py' -q
+          python -m unittest discover -s tests -p 'test_annotation.py' -q
+          python -m unittest discover -s tests -p 'test_criteria.py' -q
+          python -m unittest discover -s tests -p 'test_judge_metrics.py' -q
+          python -m unittest discover -s tests -p 'test_failure_actions.py' -q
+          python -m unittest discover -s tests -p 'test_workflow.py' -q
+          python -m unittest discover -s tests -p 'test_docs_answer.py' -q
+          python -m unittest discover -s tests -p 'test_packaging.py' -q
+          python -m unittest discover -s tests -p 'test_staging.py' -q
+      - name: Complete authored-fixture replay
+        working-directory: ${{ runner.temp }}/ail-source
+        run: python examples/docs-answer/run_demo.py --output "$RUNNER_TEMP/ail-docs-replay"
+  execution:
+    runs-on: ubuntu-latest
+    env:
+      LANGSMITH_TRACING: 'false'
+      LANGCHAIN_TRACING_V2: 'false'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Stage public execution source
+        run: python scripts/stage_offline.py --output "$RUNNER_TEMP/ail-source"
+      - name: Install pinned execution runtime
+        run: |
+          python -m pip install -r "$RUNNER_TEMP/ail-source/requirements/build.lock.txt"
+          python -m pip install --no-build-isolation -c "$RUNNER_TEMP/ail-source/requirements/execution.lock.txt" "$RUNNER_TEMP/ail-source[execution]"
+      - name: Verify execution CLI outside checkout
+        working-directory: ${{ runner.temp }}
+        run: ail-workflow experiment --help
+      - name: Verify approvals, missing results, budgets and crash recovery
+        working-directory: ${{ runner.temp }}/ail-source
+        run: |
+          python -m unittest discover -s tests -p 'test_experiment.py' -q
+          python -m unittest discover -s tests -p 'test_recovery_guard.py' -q
+          python -m unittest discover -s tests -p 'test_evidence_scaffold.py' -q
+          python -m unittest discover -s tests -p 'test_routing_measurement.py' -q
+          python -m unittest discover -s tests -p 'test_staging.py' -q
+  combined-wheel:
+    runs-on: ubuntu-latest
+    env:
+      LANGSMITH_TRACING: 'false'
+      LANGCHAIN_TRACING_V2: 'false'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Stage the public install boundary
+        run: python scripts/stage_offline.py --output "$RUNNER_TEMP/ail-source"
+      - name: Install the exact combined closure and build backend
+        run: |
+          python -m pip install --only-binary=:all: -r "$RUNNER_TEMP/ail-source/requirements/build.lock.txt"
+          python -m pip install --only-binary=:all: -r "$RUNNER_TEMP/ail-source/requirements/combined.lock.txt"
+      - name: Build and install one noneditable wheel
+        run: |
+          python -m pip wheel --no-deps --no-build-isolation --wheel-dir "$RUNNER_TEMP/ail-wheel" "$RUNNER_TEMP/ail-source"
+          python "$RUNNER_TEMP/ail-source/scripts/verify_installed.py" --snapshot "$RUNNER_TEMP/ail-source" --wheel-directory "$RUNNER_TEMP/ail-wheel" --inventory-only --output "$RUNNER_TEMP/ail-wheel-check"
+          python -m pip install --no-deps "$RUNNER_TEMP"/ail-wheel/agent_improvement_lab-0.1.0-py3-none-any.whl
+          mkdir -p "$RUNNER_TEMP/ail-outside"
+      - name: Verify installed origins, commands and both fixture routes
+        working-directory: ${{ runner.temp }}/ail-outside
+        run: python "$RUNNER_TEMP/ail-source/scripts/verify_installed.py" --snapshot "$RUNNER_TEMP/ail-source" --wheel-directory "$RUNNER_TEMP/ail-wheel" --output "$RUNNER_TEMP/ail-installed-check"
+  public-demo:
+    runs-on: ubuntu-latest
+    env:
+      LANGSMITH_TRACING: 'false'
+      LANGCHAIN_TRACING_V2: 'false'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Stage allowlisted public source
+        run: python scripts/stage_release.py --output "$RUNNER_TEMP/ail-release-source"
+      - name: Install pinned replay runtime
+        run: |
+          python -m pip install --only-binary=:all: -r "$RUNNER_TEMP/ail-release-source/requirements/build.lock.txt"
+          python -m pip install --only-binary=:all: -r "$RUNNER_TEMP/ail-release-source/requirements/workflow.lock.txt"
+          python -m pip install --no-deps --no-build-isolation "$RUNNER_TEMP/ail-release-source"
+      - name: Verify public data boundary and browser arithmetic
+        working-directory: ${{ runner.temp }}/ail-release-source
+        run: |
+          python -m unittest discover -s tests -p 'test_public_demo.py' -q
+          python -m unittest discover -s tests -p 'test_catalog.py' -q
+          python -m unittest discover -s tests -p 'test_saved_experiment.py' -q
+          python -m unittest discover -s tests -p 'test_family_site.py' -q
+          python -m unittest discover -s tests -p 'test_curated_replay.py' -q
+      - name: Build inspectable static demo
+        working-directory: ${{ runner.temp }}/ail-release-source
+        run: |
+          python examples/docs-answer/run_demo.py --output "$RUNNER_TEMP/ail-web-fixture"
+          python web_demo/build_demo.py --fixture-run "$RUNNER_TEMP/ail-web-fixture" --output "$RUNNER_TEMP/ail-web-demo"
