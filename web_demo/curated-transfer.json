@@ -1,0 +1,37 @@
+{
+  "format": "illustrative-replay-binding-v1",
+  "source_plan_sha256": "743b311f835f90457d4442a397634087eb1192cfb8cac4e7c0986851807a5a9a",
+  "builder_sha256": "b3d055e629c80edff53c2042db7d30636ef705d9554e2443787f8cb14d662c33",
+  "source_files": {
+    "family-examples.json": "e9cf7e3d2a7165d37c0cff601e670db9044fcb31e6ca42ff0c7257359e95580f",
+    "family-experiment.json": "c07384fb60a653d81c22f73ea9bba6a8c7f7654cb83157717d561d7d2e232b63",
+    "story-data.json": "426f8760870933a436ae397be8a8170c1b23c1bafdbbbb2a616373f61b65a172"
+  },
+  "files": {
+    "curated-experiment.json": "7bd78f67bcc360c4d70baee7ecc8aad2e336aea3cde133f31d6eb8758c82c5d4",
+    "curated-story.json": "2481fe1a3ad79852637f8f42bee51fd53ccd67dd7d6a4dd1d5684612b75dd839"
+  },
+  "counts": {
+    "baseline": {
+      "incorrect": 103,
+      "correct": 148,
+      "unassessable": 1
+    },
+    "candidate": {
+      "correct": 218,
+      "incorrect": 29,
+      "unassessable": 5
+    }
+  },
+  "transitions": {
+    "improved": 85,
+    "unchanged": 146,
+    "regressed": 15,
+    "unknown": 6
+  },
+  "authored_traces": 134,
+  "recorded_traces": 370,
+  "actor_calls": 0,
+  "human_gold": false,
+  "inferential_result": false
+}

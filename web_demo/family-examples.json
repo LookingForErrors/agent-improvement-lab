@@ -1,0 +1,147 @@
+{
+  "examples": [
+    {
+      "baseline": {
+        "evidence_steps": [
+          "s004",
+          "s005",
+          "s001"
+        ],
+        "primary_verdict": "incorrect",
+        "trace_id": "c3h19-s0011",
+        "trace_sha256": "de4576af8a783a23d747a1e08b8f5988da28e600981edf25f5f44b8e77c6fe0a"
+      },
+      "candidate": {
+        "evidence_steps": [
+          "s006",
+          "s007",
+          "s005",
+          "s001",
+          "s002",
+          "s004",
+          "s003",
+          "s008"
+        ],
+        "primary_verdict": "correct",
+        "trace_id": "c3h19-s0012",
+        "trace_sha256": "5ce3985a79f1eed3a889f9ff690e406db2c9a6a839571a4c06f18615eb311e76"
+      },
+      "cell": "technical-clear",
+      "family_id": "C3F048",
+      "limits": "The candidate question requests the exact Berlin local time, but the authored reply supplies only the discrepancy; do not invent a date, UTC offset or exact expected hour. Assignment is a mock acknowledgment, not a timezone repair.",
+      "mechanism": "wrong_destination",
+      "selection_kind": "gained",
+      "short_title": "A malfunction reaches the technical team",
+      "task_id": "C3F048-v2",
+      "what_changed": "The baseline read the event details but treated a concrete invitation-preview discrepancy as a product instruction question, assigning general. The candidate obtained an actual symptom reply about the preview retaining the UTC hour, then assigned technical and received the current-ticket acknowledgment. Working access and an included timezone feature were already stated. This illustrates a changed destination supported by observed facts."
+    },
+    {
+      "baseline": {
+        "evidence_steps": [
+          "s006"
+        ],
+        "primary_verdict": "incorrect",
+        "trace_id": "c3h01-s0021",
+        "trace_sha256": "3765d13379e451a3ed329580f253fa6603fbdb170fdbdafa522467bed1d3bbdf"
+      },
+      "candidate": {
+        "evidence_steps": [
+          "s006",
+          "s007",
+          "s005",
+          "s001",
+          "s002",
+          "s004",
+          "s008"
+        ],
+        "primary_verdict": "correct",
+        "trace_id": "c3h01-s0022",
+        "trace_sha256": "774c50acaae5c2953cd7ca8c79b9ee3d92daaadccc2a453a6f00962ce85516b8"
+      },
+      "cell": "payments-resolvable",
+      "family_id": "C3F013",
+      "limits": "This is not a refund, settlement or activation result. The baseline was mechanically protocol-correct for its observed calls but failed observed action; do not describe it as a proven two-question-budget violation. The prompt and action gate were evaluated together, so this example does not isolate either component causally.",
+      "mechanism": "missing_actual_action",
+      "selection_kind": "gained",
+      "short_title": "A clarification becomes an actual tool exchange",
+      "task_id": "C3F013-v3",
+      "what_changed": "The baseline reasked an already-stated action permission, then ended with a free-text question about the payment or allowance; no second ask_user call or assignment followed in the complete trace. The candidate called ask_user for the missing financial fact, received the authored pending-settlement message, and called route_ticket for payments with an acknowledgment. This illustrates completing the controlled clarification-and-routing action rather than only describing it."
+    },
+    {
+      "baseline": {
+        "evidence_steps": [
+          "s004",
+          "s005",
+          "s001"
+        ],
+        "primary_verdict": "incorrect",
+        "trace_id": "c3h03-s0023",
+        "trace_sha256": "34b4e73f69be4fe9c304029e720d1cdd14488a372b7d5479e2fef1725450adfb"
+      },
+      "candidate": {
+        "evidence_steps": [
+          "s008",
+          "s009",
+          "s005",
+          "s007",
+          "s001",
+          "s002",
+          "s004",
+          "s006",
+          "s010"
+        ],
+        "primary_verdict": "correct",
+        "trace_id": "c3h03-s0024",
+        "trace_sha256": "823b1abc9145285a5be448be6e3a4ed6e649afc48d5766fa00c7e8f4a27bb3eb"
+      },
+      "cell": "accounts-unresolved",
+      "family_id": "C3F038",
+      "limits": "The operator assignment is an observed mock fallback, not an underlying resolution. The synthetic cell name accounts-unresolved does not establish an accounts diagnosis. The candidate final sentence predicts follow-up; no operator follow-up was observed.",
+      "mechanism": "unresolved_to_operator",
+      "selection_kind": "gained",
+      "short_title": "Unknown facts lead to an operator",
+      "task_id": "C3F038-v3",
+      "what_changed": "The baseline labeled an unspecified Field Notes access/editing request as a general product question and assigned general without a verified cause. The candidate asked whether the requester could access the area and what occurred, received two authored unknown replies, then handed the current ticket to an operator. This illustrates preserving uncertainty through the allowed two checks instead of assigning a support category from the request wording."
+    },
+    {
+      "baseline": {
+        "evidence_steps": [
+          "s006",
+          "s007",
+          "s005",
+          "s001",
+          "s002",
+          "s004",
+          "s003"
+        ],
+        "primary_verdict": "correct",
+        "trace_id": "c3h01-s0011",
+        "trace_sha256": "1ada90e238180e6d167a1846780b62bb88ab42d1eb9a8dbcaefcd7a912c2f1b9"
+      },
+      "candidate": {
+        "evidence_steps": [
+          "s008",
+          "s009",
+          "s005",
+          "s007",
+          "s001"
+        ],
+        "primary_verdict": "incorrect",
+        "trace_id": "c3h01-s0012",
+        "trace_sha256": "1a6a2ed8744e1e68feb5bff4cc03fe80967f627a80f91880623af765e5c556da"
+      },
+      "cell": "accounts-clear",
+      "family_id": "C3F024",
+      "limits": "Do not infer why the model forgot the access evidence. No access restoration or invitation was observed. The candidate payment question also asks what a receipt says about permissions; the copied semantic opinions must be consulted rather than treating the field name as proof of question validity.",
+      "mechanism": "lost_explicit_access_evidence",
+      "selection_kind": "regressed",
+      "short_title": "A clear access denial is over-checked",
+      "task_id": "C3F024-v2",
+      "what_changed": "The baseline retained the initial explicit invitation-required access denial despite an unknown permission reply, assigned accounts and received an acknowledgment. The candidate asked permission and then a payment question, received unknown answers, and handed the ticket to an operator. Both arms executed acknowledged actions, but the candidate failed destination/support because the visible access-denial evidence already supported accounts. This ordinary regression shows that the joint intervention still loses established evidence in some cases."
+    }
+  ],
+  "experiment_fixture_sha256": "c07384fb60a653d81c22f73ea9bba6a8c7f7654cb83157717d561d7d2e232b63",
+  "illustrative_only": true,
+  "not_statistics": true,
+  "scope": "Illustrative selection from the complete third first-attempt cohort; not a separate statistical sample"
+}
