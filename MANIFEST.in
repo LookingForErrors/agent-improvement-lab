@@ -1,0 +1,18 @@
+include README.md pyproject.toml LICENSE
+recursive-include annotation_ui *.html *.js *.css
+recursive-include examples/docs-answer *.py
+recursive-include examples/routing-loop *.py
+recursive-include examples/criteria-demo *.py
+recursive-include examples/routing-experiment *.py *.json *.txt *.yml
+recursive-include docs *.md
+recursive-include mappings *.yaml
+recursive-include configs *.yaml
+global-exclude __pycache__ *.py[cod] *.sqlite3 *.sqlite3-* *.db
+prune artifacts
+prune annotation_data
+prune datasets
+prune tasks
+prune logs
+prune decisions
+prune .venv
+prune .venv-graph

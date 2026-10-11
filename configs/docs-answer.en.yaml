@@ -1,0 +1,56 @@
+format: criteria-pack-v1
+id: docs-answer-quality
+version: '1'
+data_kind: test_fixture
+primary_metric: task_completion
+regression_metrics:
+- tool_selection
+- context_use
+- unsupported_claims
+- citation_sources
+criteria:
+- id: task_completion
+  builtin: task_completion
+  grader:
+    kind: saved_llm
+    id: fixture_judge
+- id: tool_selection
+  builtin: tool_selection
+  grader:
+    kind: saved_llm
+    id: fixture_judge
+- id: tool_arguments
+  builtin: tool_arguments
+  grader:
+    kind: saved_llm
+    id: fixture_judge
+- id: context_use
+  builtin: context_use
+  grader:
+    kind: saved_llm
+    id: fixture_judge
+- id: clarification
+  builtin: clarification
+  grader:
+    kind: saved_llm
+    id: fixture_judge
+- id: unsupported_claims
+  builtin: unsupported_claims
+  grader:
+    kind: saved_llm
+    id: fixture_judge
+- id: citation_sources
+  definition:
+    version: '1'
+    title: Observed source citation
+    question: Does the final answer cite documents successfully read earlier in the
+      trace?
+    applicability: A nonempty textual final answer exists.
+    rubric: Check citation IDs against successful earlier read_doc results; missing
+      citations fail, malformed required read evidence is unassessable. This is linkage,
+      not claim truth or version relevance.
+    target: assistant_behavior
+  grader:
+    kind: deterministic
+    id: citation_sources
+    parameters: {}
