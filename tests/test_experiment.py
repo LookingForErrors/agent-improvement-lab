@@ -120,14 +120,19 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(marker.read_text(), before)
 
     def test_supplement_retains_terminal_failures_and_fills_only_technical_gap(self):
-        self.edit_config(limits={'wall_s':30,'request_s':2,'sample_s':2})
+        self.edit_config(limits={'wall_s':60,'request_s':2,'sample_s':10})
         self.approved(); original = subprocess.Popen; dispatched = []
-        def stalled_first(command, **kwargs):
+        def failed_first(command, **kwargs):
             dispatched.append(command)
             if len(dispatched) == 1:
-                command = [sys.executable, '-B', '-c', 'import time; time.sleep(8)']
+                command = [sys.executable, '-B', '-c', 'raise SystemExit(75)']
             return original(command, **kwargs)
-        with patch.object(ex.subprocess, 'Popen', side_effect=stalled_first): ex.run(self.workspace)
+        # Supplement eligibility is independent of cold worker startup speed.
+        with patch.object(ex.subprocess, 'Popen', side_effect=failed_first):
+            source_result = ex.run(self.workspace)
+        self.assertEqual(source_result['completed_slots'], 7)
+        self.assertEqual(ex.read(self.workspace / 'slots/s0001/failure.json')['reason'],
+                         'worker exited unsuccessfully')
         frozen = {str(f.relative_to(self.workspace)): ex.sha(f) for f in self.workspace.rglob('*') if f.is_file()}
         supplement = self.root / 'supplement'
         state = ex.prepare_supplement(self.config, supplement, self.workspace)
