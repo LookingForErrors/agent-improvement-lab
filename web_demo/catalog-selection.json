@@ -1,0 +1,213 @@
+{
+  "format": "routing-catalog-selection-v1",
+  "dataset_version": "routing-catalog-curated-v1",
+  "source_dataset": "routing-demo-en-v1",
+  "scope": "working_only",
+  "provenance": "curated_scripted_synthetic_not_model_run",
+  "notes": [
+    "One task per family; families remain authored scenarios, not independent production samples",
+    "First-person clarification wording repaired in a new version; raw corpus preserved",
+    "Context-heavy histories are synthetic stress fixtures with repeated archived templates",
+    "Six outcome variants are authored failure injections, not measured failure frequency"
+  ],
+  "tasks": [
+    {
+      "id": "47600117614c",
+      "title": "Charged, but subscription inactive"
+    },
+    {
+      "id": "a25216099f23",
+      "title": "Two charges for one purchase"
+    },
+    {
+      "id": "41567ad72b37",
+      "title": "Discount missing from the charge"
+    },
+    {
+      "id": "c4a155ee02cf",
+      "title": "Invoice above the agreed price"
+    },
+    {
+      "id": "589cb5314bb0",
+      "title": "Refund an accidental second package"
+    },
+    {
+      "id": "baeb2006f985",
+      "title": "Refund missing after cancellation"
+    },
+    {
+      "id": "9971cdc8c816",
+      "title": "Sign-in code never arrives"
+    },
+    {
+      "id": "85eba7f749f8",
+      "title": "Old phone blocks sign-in"
+    },
+    {
+      "id": "68bf77f1f64e",
+      "title": "Confirmation sent to the old email"
+    },
+    {
+      "id": "74e3b4343f30",
+      "title": "Invitation accepted, access missing"
+    },
+    {
+      "id": "7ee4c8d32c2c",
+      "title": "Account locked after failed attempts"
+    },
+    {
+      "id": "f994a20ec09b",
+      "title": "Profile still shows the old name"
+    },
+    {
+      "id": "62a8f720838a",
+      "title": "Export fails despite working access"
+    },
+    {
+      "id": "d9eaf2323535",
+      "title": "Saved draft disappears"
+    },
+    {
+      "id": "aa620c743547",
+      "title": "An allowed-size upload fails"
+    },
+    {
+      "id": "61d9c331cba6",
+      "title": "Opening a report crashes the app"
+    },
+    {
+      "id": "91224f937aa6",
+      "title": "API 500 with a valid token"
+    },
+    {
+      "id": "68320c9ff116",
+      "title": "Report timestamps are incorrect"
+    },
+    {
+      "id": "f27dbf172a04",
+      "title": "Plan features before purchase"
+    },
+    {
+      "id": "b63f393be475",
+      "title": "Compare packages before buying"
+    },
+    {
+      "id": "18f364401727",
+      "title": "Which export formats are supported?"
+    },
+    {
+      "id": "63a393529009",
+      "title": "How to set up notifications"
+    },
+    {
+      "id": "b77025843b74",
+      "title": "What does the integration support?"
+    },
+    {
+      "id": "de3fe468833d",
+      "title": "How does cancellation work?"
+    },
+    {
+      "id": "462353985e84",
+      "title": "The issue is still unclear"
+    },
+    {
+      "id": "d769d2cd2f54",
+      "title": "Payment or sign-in? Still unclear"
+    },
+    {
+      "id": "bf81ef7a29b3",
+      "title": "The user declines to explain"
+    },
+    {
+      "id": "33017a369577",
+      "title": "The conversation keeps changing"
+    },
+    {
+      "id": "7b37e730d6a2",
+      "title": "A charge or just a displayed price?"
+    },
+    {
+      "id": "38ae47c3ca53",
+      "title": "Earlier conversation unavailable"
+    }
+  ],
+  "patches": {
+    "a25216099f23": {
+      "user_request": "Can you help me sort this out? I’m tired of asking.",
+      "simulated_replies": [
+        "I have two settled charges for the same purchase on one order."
+      ]
+    },
+    "baeb2006f985": {
+      "user_request": "Can you check what happened here?",
+      "simulated_replies": [
+        "My balance went down after I cancelled the order, and I haven’t received the refund."
+      ]
+    },
+    "85eba7f749f8": {
+      "user_request": "I need help with this. I’m tired of asking.",
+      "simulated_replies": [
+        "I don’t have access to my old phone, so I can’t get through two-factor sign-in."
+      ]
+    },
+    "f994a20ec09b": {
+      "user_request": "This still doesn’t look right. Can you help?",
+      "simulated_replies": [
+        "My personal-details update was confirmed, but my profile still shows my old name."
+      ]
+    },
+    "d9eaf2323535": {
+      "user_request": "Something isn’t working right. I’m tired of asking for help.",
+      "simulated_replies": [
+        "I saved my draft, but it disappears when I reopen the page."
+      ]
+    },
+    "68320c9ff116": {
+      "user_request": "Can you help me figure out what’s wrong?",
+      "simulated_replies": [
+        "The timestamps in my reports are off, even though my time-zone setting is correct."
+      ]
+    },
+    "b63f393be475": {
+      "user_request": "I need some help here. I’m tired of asking.",
+      "simulated_replies": [
+        "I haven’t bought a package yet. I want to know how the packages differ."
+      ]
+    },
+    "de3fe468833d": {
+      "user_request": "Can you help me understand this?",
+      "simulated_replies": [
+        "My subscription is still active. I want to know how cancellation normally works."
+      ]
+    },
+    "bf81ef7a29b3": {
+      "simulated_replies": [
+        "I’m not explaining it again.",
+        "I’m not going through it again."
+      ]
+    },
+    "589cb5314bb0": {
+      "user_request": "I bought a second package by mistake. Can I get that payment back? There’s a lot of old history attached to this ticket."
+    },
+    "7ee4c8d32c2c": {
+      "user_request": "I got my password wrong a few times and now my account is locked. The earlier messages in this ticket are about other issues."
+    },
+    "91224f937aa6": {
+      "user_request": "The API keeps returning 500. The token is valid and the permissions are right. I’ve attached the earlier ticket history."
+    },
+    "b77025843b74": {
+      "user_request": "What can this integration do? I haven’t connected it yet. There’s some earlier support history in the ticket."
+    },
+    "7b37e730d6a2": {
+      "user_request": "Maybe I paid, or maybe it just showed me a price. I can’t tell. The ticket has lots of older messages too."
+    }
+  },
+  "unsupported_claims": {
+    "payments": "I’ve also corrected the billing issue.",
+    "accounts": "I’ve also fixed the account issue.",
+    "technical": "I’ve also fixed the malfunction.",
+    "general": "I’ve also verified the answer with the product team.",
+    "operator": "An operator has already reviewed your case."
+  }
+}
