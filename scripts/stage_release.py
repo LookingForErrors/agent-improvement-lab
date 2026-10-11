@@ -9,7 +9,7 @@ import shutil
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('release_offline_boundary',ROOT/'scripts/stage_offline.py')
 offline=importlib.util.module_from_spec(spec);spec.loader.exec_module(offline)
-EXTRA=['scripts/stage_release.py','tests/test_public_demo.py','tests/test_catalog.py','web_demo/index.html','web_demo/app.js','web_demo/style.css','web_demo/build_demo.py','web_demo/README.md','web_demo/catalog.html','web_demo/catalog.js','web_demo/build_catalog.py','web_demo/catalog-selection.json','web_demo/catalog-fixture.json','docs/public-demo.md','docs/provenance.md']
+EXTRA=['scripts/stage_release.py','tests/test_public_demo.py','tests/test_catalog.py','web_demo/index.html','web_demo/app.js','web_demo/style.css','web_demo/build_demo.py','web_demo/README.md','web_demo/catalog.html','web_demo/catalog.js','web_demo/build_catalog.py','web_demo/catalog-selection.json','web_demo/catalog-fixture.json','docs/public-demo.md','docs/provenance.md','docs/architecture.md','docs/improvement-loop.png']
 BASE_DEMO=['index.html','app.js','style.css','demo-data.json','demo-data.js','DEMO-MANIFEST.json']
 CATALOG_DEMO=BASE_DEMO+['catalog.html','catalog.js','catalog-data.json','catalog-data.js']
 LEGACY_DEMO=CATALOG_DEMO+['experiment.html','experiment.js','experiment-data.json','experiment-data.js']
@@ -70,68 +70,53 @@ environments and small-model SFT/RL are later work. See [provenance](docs/proven
 
 CURRENT_README='''# Agent Improvement Lab
 
-An interactive case study and research prototype for LLM assistant improvement.
-Find failures, choose a concrete change and compare the next version.
-Evaluation reliability comes first.
+[![CI](https://github.com/LookingForErrors/agent-improvement-lab/actions/workflows/offline.yml/badge.svg)](https://github.com/LookingForErrors/agent-improvement-lab/actions/workflows/offline.yml)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB)](docs/quickstart.md)
+[![MIT](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
-```
-your traces + product rules
-→ evaluation → human validation → failure evidence
-→ proposed change → human choice → repeated version comparison
-```
+Find assistant failures, choose a concrete change and compare the next version.
+An interactive case study and research prototype, with evaluation reliability first.
 
-A failure may call for a prompt change, better context, a tool fix, a different
-scaffold, retrieval or training. The library helps collect evidence for that
-choice; it does not train models or automatically apply changes.
+**[Explore the demo](https://lookingforerrors.github.io/agent-improvement-lab/)** ·
+[Quickstart](docs/quickstart.md) · [Architecture](docs/architecture.md)
 
-## Browser example
+[![Trace evidence and assistant error highlighted in the synthetic improvement demo](docs/improvement-loop.png)](https://lookingforerrors.github.io/agent-improvement-lab/)
 
-Follow traces through failure analysis, a prompt change and verification:
-**58.7% → 86.5%** on 252 paired tasks in 84 families. This synthetic replay
-combines recorded and authored trajectories; the displayed rates illustrate the
-workflow. [Data sources and measurement details](docs/provenance.md).
+## The loop
 
-See [the browser guide](docs/public-demo.md) and [build instructions](web_demo/README.md).
-The site replays saved data without model or API calls.
-
-## What works now
-
-Start with the bundled case studies. Using the Python components with another
-assistant requires a trace mapping, task rules and grader configuration.
-
-- Import JSON/JSONL traces with [a schema mapping](docs/trace-import.md).
-- Use six built-in or custom [criteria](docs/criteria.md), including explicitly
-  loaded deterministic checkers and saved LLM rubric assessments.
-- Review cases in a durable [blind annotation interface](docs/annotation.md).
-- Inspect [judge coverage, agreement and errors](docs/judge-metrics.md).
-- Draft evidence-bound [failure-to-action proposals](docs/failure-actions.md).
-- Run [LangGraph annotation, plan and approval checkpoints](docs/workflow.md).
-- Compare saved results or run bounded [Inspect experiments](docs/experiment.md).
-
-The library can prepare provider-neutral judge requests; it does not run a live
-judge automatically. Experiments use controlled tools and a caller-managed model
-endpoint. Offline examples need no endpoint. Repeats and paraphrases share tasks
-and families; working and heldout results stay separate.
-
-## Try the offline workflow
-
-[Quickstart](docs/quickstart.md) covers Python 3.12, exact dependency versions,
-installation and runnable examples. The [documentation assistant](docs/docs-answer-demo.md)
-reuses the workflow in a second domain. Its traces, semantic assessments and
-candidate answers are authored test fixtures; human mode creates an empty queue.
-
-Serve the bundled static site from this snapshot:
-
-```sh
-python3 -m http.server 8782 --bind 127.0.0.1 --directory demo
+```mermaid
+flowchart LR
+  T[Traces] --> E[Evaluate] --> R[Review evidence] --> C[Choose a change] --> V[Compare versions]
 ```
 
-Open `http://127.0.0.1:8782`. Results exposes all pairs and six criteria;
-`guided.html` preserves the authored documentation workflow and `pilot.html`
-the earlier rejected pilot.
+Synthetic replay: **58.7% → 86.5%**, 252 paired tasks in 84 families.
+Recorded and authored trajectories illustrate the workflow. [Data details](docs/provenance.md).
 
-Licensed under [MIT](LICENSE).
+## What works
 
+- Import JSON/JSONL with [schema mappings](docs/trace-import.md) and use six built-in or custom [criteria](docs/criteria.md).
+- Preserve blind [annotation and evidence](docs/annotation.md); inspect [judge agreement and errors](docs/judge-metrics.md).
+- Draft [failure-to-action proposals](docs/failure-actions.md) and review them through [human checkpoints](docs/workflow.md).
+- Compare saved results or run controlled [model/tool experiments](docs/experiment.md).
+
+## Design
+
+| Layer | Responsibility |
+| --- | --- |
+| Python | Trace validation, graders, metrics and reports |
+| LangGraph | Saved-result review, SQLite checkpoints and human decisions |
+| Inspect AI | Controlled assistant/tool experiments |
+
+Task and family IDs keep repeats grouped. Evidence links connect scores to trace steps.
+[Architecture](docs/architecture.md) explains the boundaries.
+
+## Try it
+
+[Quickstart](docs/quickstart.md) opens the site locally or runs an offline Python
+example that produces an evaluation, proposed change and paired comparison.
+
+Start with the bundled cases. Another assistant needs its own mapping, rules and
+graders. Live judge automation, automatic interventions and training are later work.
 '''
 
 
@@ -188,10 +173,10 @@ def stage(output,demo=None):
         readme=readme.replace(experiment_paragraph,'Open `demo/experiment.html` for all 252 paired outcomes, six criteria and\nsource-bound evidence. `demo/pilot.html` preserves the earlier rejected pilot;\n`demo/guided.html` retains the authored NovaDocs workflow and personal proposals\n')
         if 'curated-story.json' in demo_names:
             readme=readme.replace('Open `demo/index.html` for the saved improvement story on 252 paired\nsynthetic tasks in 84 families. Inspect the criteria and source-bound evidence.\nServe the static assets over localhost or static hosting','Open `demo/index.html` for the synthetic improvement workflow. It uses\n370 recorded trajectories plus 134 authored successful trajectories on\n252 paired tasks. Shared fixture repairs raise both versions for presentation.\nIts displayed rates are descriptive, not a new measured model gain.\nNo live model runs. Serve the assets over localhost or static hosting')
-    if demo is None:
-        readme=CURRENT_README.replace('Serve the bundled static site from this snapshot:\n\n```sh\npython3 -m http.server 8782 --bind 127.0.0.1 --directory demo\n```\n\nOpen `http://127.0.0.1:8782`. Results exposes all pairs and six criteria;\n`guided.html` preserves the authored documentation workflow and `pilot.html`\nthe earlier rejected pilot.','Build the static site following [web_demo](web_demo/README.md), then serve the\nnew output directory over localhost. Results exposes all pairs and six criteria;\n`guided.html` preserves the documentation workflow and `pilot.html` the earlier pilot.')
-    elif demo_names==set(DEMO):
+    if demo is None or demo_names==set(DEMO):
         readme=CURRENT_README
+    if demo is None:
+        readme=readme.replace('[Quickstart](docs/quickstart.md) opens the site locally or runs an offline Python\nexample that produces an evaluation, proposed change and paired comparison.', '[Quickstart](docs/quickstart.md) runs an offline Python example with an evaluation,\nproposed change and paired comparison. To open this source-only snapshot locally,\n[build the static site](web_demo/README.md) first.')
     (output/'README.md').write_text(readme)
     files['README.md']=digest(output/'README.md')
     document=json.loads((output/'STAGING-MANIFEST.json').read_text());document.update(kind='unpublished_release_preparation',files=files)
